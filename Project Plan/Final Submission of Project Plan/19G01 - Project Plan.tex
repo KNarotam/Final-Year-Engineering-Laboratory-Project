@@ -44,15 +44,9 @@ Witwatersrand, Private Bag 3, 2050, Johannesburg, South Africa}
 %----------------------------------------------------------------------------------------
 %	ABSTRACT
 %----------------------------------------------------------------------------------------
-\abstract{The purpose of this document is to provide an easy-to-use
-template/style sheet to enable authors to prepare papers in the correct format
-and style for the final year laboratory project. This document may be
-downloaded from the School of Electrical and Information Engineering web site
-and can be used as a template. To ensure conformity of appearance it is
-essential that these instructions are followed. The abstract should be limited
-to 50-200 words, which should concisely summarise the paper.}
+\abstract{}
 
-\keywords{Four to six key words in alphabetical order, separated by commas.}
+\keywords{DCT, Decoding, Encoding, Holes, Image Compression}
 
 
 \maketitle
@@ -188,7 +182,7 @@ The DCT compression technique will be utilized for the compression of the image.
 
 \subsection{Step 6: Encode and Transfer image}
 \label{sec: Step 6}
-The image is encoded as a binary message, and when transmitted through the channel, errors are randomly introduced which can be easily detected and corrected. The data that will be sent through the channel will be a bit stream and the errors introduced will be based off of a byte with a probability of $10^{-3}$ where the byte can then be randomized. Alternatively, each bit can be random selected to be prone to an error and the bit value flipped. 
+The image is encoded as a binary message, and when transmitted through the channel, errors are randomly introduced. The data that will be sent through the channel will be a bit stream and the errors introduced will be based off of a byte with a probability of $10^{-3}$ where the byte can then be randomized. Alternatively, each bit can be random selected to be prone to an error and the bit value flipped. 
 
 \subsection{Step 7: Decode and Error Check}
 \label{sec: Step 7}
@@ -246,6 +240,14 @@ Chapman, C; \emph{Everything You Need to Know About Image Compression | The JotF
 \renewcommand{\thefigure}{\arabic{figure}}
 \centering
 \includegraphics[scale=1]{Gantt.png}
+\caption{Table showing the tasks and time allocated in completing the project}
+\label{fig: Task Time Management}
+\end{figure}
+
+\begin{figure}[h!]
+\renewcommand{\thefigure}{\arabic{figure}}
+\centering
+\includegraphics[scale=0.8]{gantt1.png}
 \caption{Gantt chart showing the tasks and time allocated in completing the project}
 \label{fig: Gantt}
 \end{figure}
