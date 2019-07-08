@@ -1,17 +1,19 @@
-\documentclass[10pt,twocolumn]{witseiepaper}
+\documentclass[10pt,twocolumn, a4paper]{witseiepaper}
 
 \usepackage{KJN}
 \hyphenation{op-tical net-works semi-conduc-tor}
 \usepackage{graphicx}
 \usepackage[export]{adjustbox}
-\usepackage{fancyhdr}
 \usepackage{url}
 \usepackage{amsmath}
 \usepackage{listings}
-\usepackage{algorithm}
-\usepackage{algorithmic}
+\usepackage{algpseudocode,algorithm,algorithmicx}
+\usepackage{pdflscape}
 \usepackage{lipsum}
 \usepackage{bookmark}
+\usepackage[normalem]{ulem}
+\def\code#1{\texttt{#1}}
+
 
 %----------------------------------------------------------------------------------------
 %	PDF INFORMATION
@@ -25,6 +27,7 @@
 /Keywords (ELEN4012, Laboratory Project, Image Compression, 4th Year)
 }
 \fi
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
@@ -44,13 +47,14 @@ Witwatersrand, Private Bag 3, 2050, Johannesburg, South Africa}
 %----------------------------------------------------------------------------------------
 %	ABSTRACT
 %----------------------------------------------------------------------------------------
-\abstract{}
+\abstract{This report covers the project plan for the project based on image compression. The project plan looks at the specifications that will define a successful project implementation and a brief look at existing models of image compression. The proposed strategy involves an encoder and decoder side that will be implemented in MATLAB. The encoder side of the strategy involves reading the image, converting to grayscale, dividing the image into a domain pool, creating holes in the image, compressing the image using known technique. The image is encoded and transmitted through a channel and random errors introduced. The decoder involves decompressing the image, filling the holes and reconstructing the final image. A performance index is proposed as well as a look into cost management. Time management is discussed in detail with the aid of a Gantt chart and how the documentation of the project will be done.1}
 
-\keywords{DCT, Decoding, Encoding, Holes, Image Compression}
+\keywords{Image compression, DCT, Wavelets, MATLAB, Project Plan}
 
 
 \maketitle
-\thispagestyle{empty}\pagestyle{empty}
+%\thispagestyle{empty}
+\pagestyle{plain}
 
 
 %----------------------------------------------------------------------------------------
@@ -93,7 +97,7 @@ Lossless compression allows the original form of data to be reproduced, thus mea
 \item Huffman encoding
 \item Shannon-Fano encoding
 \item Arithmetic
-\item Dictionary based.
+\item Dictionary based~\cite{DiffTech}.
 \end{itemize}
 
 
@@ -106,7 +110,7 @@ Lossy compression removes some of the data from the original file, resulting in 
 \item Transform Coding
 \item Block transform
 \item DCT/DWT
-\item JPEG.
+\item JPEG~\cite{DiffTech}.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -134,7 +138,7 @@ Firstly, an image is loaded into MATLAB, and a PNG or BMP image is specifically 
 \begin{figure}[h!]
 \renewcommand{\thefigure}{\arabic{figure}}
 \centering
-\includegraphics[scale=0.3, frame]{Step1.png}
+\includegraphics[scale=0.5, frame]{Step1.png}
 \caption{$128\times 128$ image that will be loaded}
 \label{fig: Step 1}
 \end{figure}
@@ -145,7 +149,7 @@ The loaded image is converted to greyscale, and the reason for this is because a
 \begin{figure}[h!]
 \renewcommand{\thefigure}{\arabic{figure}}
 \centering
-\includegraphics[scale=0.3, frame]{Step2.png}
+\includegraphics[scale=0.5, frame]{Step2.png}
 \caption{Image after it has been greyscaled in MATLAB}
 \label{fig: Step 2}
 \end{figure}
@@ -156,29 +160,98 @@ The image is now divided into smaller $8\times 8$ blocks, creating the domain po
 \begin{figure}[h!]
 \renewcommand{\thefigure}{\arabic{figure}}
 \centering
-\includegraphics[scale=0.4, frame]{Step3.jpg}
+\includegraphics[scale=0.7, frame]{Step3.jpg}
 \caption{Smaller $8\times 8$ blocks creating the domain pool}
 \label{fig: Step 3}
 \end{figure}
 
+\subsubsection{Indexing the blocks}
+\label{sec: Index Block}
+Since the images that will be chosen will have dimensions divisible by 8, the first step in determining how many blocks in the domain pool will be created, would be to divide the width and height of the image by 8 to determine how many blocks there will be going across and down the image. Algorithm~\ref{alg: Block index} shows a very high-level approach to finding the top left pixel of a block in the domain pool
+
+\begin{algorithm}[h!]
+\caption{High level algorithm of finding the \code{x,y} coordinates of the respective blocks in the domain pool}
+\label{alg: Block index}
+\begin{algorithmic}
+\State \code{xBlocks} $\leftarrow$ \code{widthOfImage/8}
+\State \code{yBlocks} $\leftarrow$ \code{heightOfImage/8}
+\State Set initial \code{(x, y)} values to be \code{(1, 1)} for block 1
+\State To move onto next block:
+\State \quad set \code{x} to $8(i)-7$, where $i$ is the block number
+\If{\code{BlockNumber > xBlocks}}
+	\State Set \code{y} to $8(i+1)-7$
+	\State Reset \code{x} to be 1 and move to next block
+\EndIf
+\end{algorithmic}
+\end{algorithm}
+
 \subsection{Step 4: Create holes in the smaller blocks}
 \label{sec: Step 4}
-With the domain pool created, holes are created by starting at the center square within the $8\times 8$ block. Starting off with the center $2\times 2$ square, the average value of those 4 pixels are calculated. If the average value is within $\pm 5\ or\ 10$ of each pixel value, a hole can be created in those 4 pixels. A larger square in the same $8\times 8$ block is checked with a size of $4\times 4$. The average of these pixels are calculated and as before compared to each value of the center square. This can continue until we reach a center square size of $6\times 6$, which we will define as the largest hole that can be made. Figure
+With the domain pool created, holes are created by starting at the center square within the $8\times 8$ block. Starting off with the center $2\times 2$ square, the average value of those 4 pixels are calculated. Each pixel in the $2\times 2$ square is compared to the average value of the smaller square using the Chebyshev distance. The Chebyshev distance between each pixel and the average forms the basis of the similarity index that will be used in the project and it's implementation. If the value of the similarity index is less than $5$ for all pixels, a hole can be created in those 4 pixels. A larger square in the same $8\times 8$ block is checked with a size of $4\times 4$. The average of these pixels are calculated and as before compared to each value of the center square. This can continue until we reach a center square size of $6\times 6$, which we will define as the largest hole that can be made. Algorithm~\ref{alg: Creating Holes} shows a high-level algorithm for creating the holes in the blocks in the domain pool.
+
 \begin{figure}[h!]
 \renewcommand{\thefigure}{\arabic{figure}}
 \centering
-\includegraphics[scale=1.5]{Grid.png}
-\caption{How a $8\times 8$ block (black square) will be checked for hole creation starting with the purple square.}
+\includegraphics[scale=0.2]{Grid.png}
+\caption{How a $8\times 8$ block (gray square) will be checked for hole creation starting with the purple square.}
 \label{fig: Grid}
 \end{figure}
 
-\subsection{Index block if the hole has been created}
-\label{sec: Index Block}
-If a hole has been created in a specific block in the domain pool, a one-dimensional array will be created with the value of the block index. This array will be transmitted with the image itself, so that when received by the receiver, it will have a list of the blocks in the domain pool that contain a hole.
+Figure~\ref{fig: Grid} shows how each of the $8\times 8$ squares in the domain pool, will be checked, starting with the blue squares, moving up to the orange squares to the largest defined hole which are the green squares.
 
-\subsection{Step 5: Compress image using a known technique (DCT)}
+\begin{algorithm}[h!]
+\caption{High level algorithm of method of creating holes}
+\label{alg: Creating Holes}
+\begin{algorithmic}
+\State \code{x} coordinate  $\leftarrow$ \code{x+3}
+\State \code{y} coordinate  $\leftarrow$ \code{y+3}
+\State Calculate average of squares: \code{(x,y; x+1,y; x, y+1; x+1, y+1)}
+\For{\code{x} till \code{x+1}}
+	\For{\code{y} till \code{y+1}}
+		\State Check \code{Chebyshev} distance between \code{(x,y)} and average
+	\EndFor
+\EndFor
+\If{Chebyshev distance between average \& each pixel $\leq$ 5}
+	\State Set value in pixels \code{(x,y; x+1,y; x, y+1; x+1, y+1)} to \code{0}
+\Else
+	\State Compress image
+\EndIf
+\State
+\State \code{x} coordinate  $\leftarrow$ \code{x+2}
+\State \code{y} coordinate  $\leftarrow$ \code{y+2}
+\State Calculate average of squares (now $4\times 4$ square)
+\For{\code{x} till \code{x+3}}
+	\For{\code{y} till \code{y+3}}
+		\State Check \code{Chebyshev} distance between \code{(x,y)} and average
+	\EndFor
+\EndFor
+\If{Chebyshev distance between average \& each pixel $\leq$ 5}
+	\State Set value in pixels to \code{0}
+\Else
+	\State Compress image
+\EndIf
+\State
+\State \code{x} coordinate  $\leftarrow$ \code{x+1}
+\State \code{y} coordinate  $\leftarrow$ \code{y+1}
+\State Calculate average of squares (now $6\times 6$ square)
+\For{\code{x} till \code{x+3}}
+	\For{\code{y} till \code{y+3}}
+		\State Check \code{Chebyshev} distance between \code{(x,y)} and average
+	\EndFor
+\EndFor
+\If{Chebyshev distance between average \& each pixel $\leq$ 5}
+	\State Set value in pixels to \code{0}
+\Else
+	\State Compress image
+\EndIf
+\State Compress image
+\end{algorithmic}
+\end{algorithm}
+
+
+\subsection{Step 5: Compress image using a known technique (DCT/Fractal/Wavelets)}
 \label{sec: Step 5}
-The DCT compression technique will be utilized for the compression of the image. DCT will be performed on each block in the domain pool, and DCT is done on $8\times 8$ matrix, which is the reason the domain pool is made up of multiple $8\times 8$ blocks and that an image where the dimensions are divisible by 8 is chosen. The image is now compressed and can be transmitted into the channel.
+The DCT compression technique will be first utilized for the compression of the image. DCT will be performed on each block in the domain pool, and DCT is done on $8\times 8$ matrix, which is the reason the domain pool is made up of multiple $8\times 8$ blocks and that an image where the dimensions are divisible by 8 is chosen. The image is now compressed and can be transmitted into the channel.
 
 \subsection{Step 6: Encode and Transfer image}
 \label{sec: Step 6}
@@ -188,13 +261,19 @@ The image is encoded as a binary message, and when transmitted through the chann
 \label{sec: Step 7}
 Identification of the location of the errors is required. First, identifying the errors are required, and if detected must be corrected and then the image can be decoded. The image will be converted from a bit stream into its 2-dimensional matrix.
 
-\subsection{Step 8: Decompress (Inverse DCT)}
+\subsection{Step 8: Decompress (Inverse DCT/Fractal/Wavelets)}
 \label{sec: Step 8}
 Since DCT compression was used, we now perform the inverse DCT to obtain the compressed image and its respective values in the 2-dimensional matrix.
 
 \subsection{Step 9: Fill holes in the image}
 \label{sec: Step 9}
 With the one-dimensional array sent across the channel, the blocks within the domain pool that contain the holes can be identified. Starting at outer pixels, the average pixel value of the square is calculated, and that will fill the inner pixels where the hole was created.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\section{PERFORMANCE INDEX}
+\label{sec: Performance Index}
+The nature of this project is based around current methodologies and is more research-based, and because of this results are require to present the overall performance of the proposed technique. Since MATLAB is utilized, many image compression techniques can be implemented with relative simplicity. For that reason, other compression techniques such as fractal compression or wavelets compression will be implemented after DCT compression. The DCT compression will be set as the benchmark and a comparison with the fractal or wavelets compression will be done. The values of peak-signal-to=noise-ratio (PSNR) and mean-squared-error (MSE) will be the main focus of comparison.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -206,14 +285,23 @@ The nature of this project is software based, and thus the total costs are minim
 %
 \section{TIME MANAGEMENT}
 \label{sec: Time Management}
-The Project window runs from 15 July 2019 until 29 August 2019. The proposed timeline of events and duration of these events can be seen in Figure~\ref{fig: Gantt}. Based on the planned approximated time that is allocated to each task, this indicates that keeping to a tight schedule is required.
+The Project window runs from 01 July 2019 until 11 September 2019. The proposed timeline of events and duration of these events can be seen in Figure~\ref{fig: Tasks}, in conjunction with this, Figure~\ref{fig: Gantt} shows the . The project begins with the planning phase including a literature review and the development of the project plan. The overall idea and method was continuously discussed between the team of engineers and the associated supervisor. Once the project plan was approved, the engineers can begin with the execution of the plan.
 
+The encoder side is tackled first while the channel can be created in parallel with that. Once the encoder and channel have been completed and tested, the decoder side of the proposed solution can be implemented. The initial implementation of the encoder will utilize DCT, and once an entire solution is created and tested using DCT, other compression techniques can be implemented in conjunction with the proposed solution. The results of the DCT compression is compared to the other implemented compression technique.
+
+Based on the planned approximated time that is allocated to each task, this indicates that keeping to a tight schedule is required. Since the supervisor will not be available during the first two weeks, the engineers will have to work together and communicate efficiently in order for them to encounter minimal problems and build the proposed solution.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\section{DOCUMENTATION}
+\label{sec: Documentation}
+Throughout the project window, constant meetings and discussions will be held between the engineers and the supervisor. As seen in Figure~\ref{fig: Tasks} and~\ref{fig: Gantt} the \emph{Monitoring and Control} task is run from the day after the project plan is submitted till the project is presented. All meetings have and will be documented as meeting minutes, discussing the meeting and the agenda of the project at that period of time. A private GitHub repository is created so that the engineers can constantly work on the proposed strategy while keeping all documents and helpful materials available to them at all times.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 \section{CONCLUSION}
 \label{sec: Conclusion}
-
+The proposed project plan was given approval by the supervisor. This document discussed existing models of image compression, and gives a detailed description of the proposed strategy of image compression for this project. Block diagrams, example images and high-level algorithms are given as a way of explaining the proposed strategy in more detail. Multiple image compression techniques will be utilized, and the results will be discussed as a performance index. The cost management is discussed, however since the project is research and software-based, no costs will be incurred in the proposed solution. The time management of the project is discussed in detail with a Gantt chart presented as supporting material.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -233,24 +321,31 @@ Wei-Yi Wei; \emph{An Introduction to Image Compression}; Graduate Institute of C
 \bibitem{Loss}
 Chapman, C; \emph{Everything You Need to Know About Image Compression | The JotForm Blog}; \url{https://www.jotform.com/blog/everything-you-need-to-know-about-image-compression/}; Last Accessed: 02/07/2019
 
+\bibitem{DiffTech}
+Singh, M; Kumar, S; Chouhan, SS; Shrivastava, M (PhD); \emph{Various Image Compression Techniques: Lossy and Lossless}; Journal of International Journal of Computer Applications; Volume 142; Issue No. 6; pp 23 - 26; May 2016
+
 \end{thebibliography}
 
 \onecolumn
 \begin{figure}[h!]
 \renewcommand{\thefigure}{\arabic{figure}}
 \centering
-\includegraphics[scale=1]{Gantt.png}
+\includegraphics[scale=0.8, frame]{TableTasks.png}
 \caption{Table showing the tasks and time allocated in completing the project}
-\label{fig: Task Time Management}
+\label{fig: Tasks}
 \end{figure}
 
+\newpage
+\begin{landscape}
 \begin{figure}[h!]
 \renewcommand{\thefigure}{\arabic{figure}}
 \centering
-\includegraphics[scale=0.8]{gantt1.png}
-\caption{Gantt chart showing the tasks and time allocated in completing the project}
+\hspace{-1.5cm}
+\includegraphics[scale=0.5, frame]{Gantt.png}
+\caption{Gantt chart showing the tasks and time allocated in completing the project with the critical path highlighted}
 \label{fig: Gantt}
 \end{figure}
+\end{landscape}
 
 \end{document}
 
