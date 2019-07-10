@@ -47,9 +47,9 @@ Witwatersrand, Private Bag 3, 2050, Johannesburg, South Africa}
 %----------------------------------------------------------------------------------------
 %	ABSTRACT
 %----------------------------------------------------------------------------------------
-\abstract{This report covers the project plan for the project based on image compression. The project plan looks at the specifications that will define a successful project implementation and a brief look at existing models of image compression. The proposed strategy involves an encoder and decoder side that will be implemented in MATLAB. The encoder side of the strategy involves reading the image, converting to grayscale, dividing the image into a domain pool, creating holes in the image, compressing the image using known technique. The image is encoded and transmitted through a channel and random errors introduced. The decoder involves decompressing the image, filling the holes and reconstructing the final image. A performance index is proposed as well as a look into cost management. Time management is discussed in detail with the aid of a Gantt chart and how the documentation of the project will be done.1}
+\abstract{This report covers the project plan for the laboratory project based on image compression. The project plan looks at the specifications that will define a successful project implementation and a brief look at existing models of image compression. The proposed strategy involves an encoder and decoder side that will be implemented in MATLAB. The encoder side of the strategy involves: reading the image, converting to grayscale, dividing the image into a domain pool, creating holes in the image and compressing the image using known technique. The image is encoded and transmitted through a channel and random errors introduced. The decoder involves: decompressing the image, filling the holes and reconstructing the final image. A performance index is proposed as well as a look into cost management. Time management is discussed in detail with the aid of a Gantt chart and how the documentation of the project will be done.}
 
-\keywords{Image compression, DCT, Wavelets, MATLAB, Project Plan}
+\keywords{Image compression, DCT, MATLAB, Project Plan, Hole creation}
 
 
 \maketitle
@@ -75,7 +75,7 @@ In the report that follows, a project plan is created for the telecommunications
 %
 \section{PROJECT SPECIFICATIONS}
 \label{sec: Project Specs}
-The aim of the project is to create a robust scheme for determining multiple holes that may be received in an image and appropriately fill these holes. in addition, the image may be subject to random burst errors which need to be identified and corrected.
+The aim of the project is to create a robust scheme for determining multiple holes that may be received in an image and appropriately fill these holes. In addition, the image may be subject to random burst errors which need to be identified and corrected.
 
 An image will be chosen for compression utilizing a compression technique and creating holes in the image. After transmission, filling of those holes will result in the original image. The holes will be created manually with a proposed algorithm and the additional compression layer will make use of current compression algorithms (DCT or fractal compression). Once the holes are created, the image will be transmitted via a simple channel that will introduce errors randomly. The image will be received at the receiver, and knowing where the holes are present through the encoding scheme will fill them accordingly using a different algorithm. The receiver will also have to deal with random errors that may have occurred from the channel. The received image with the filled holes will be reconstructed and presented as the final image which should coincide with the original image.
 
@@ -124,13 +124,13 @@ The proposed solution will be implemented in MATLAB and can be broken down into 
 \end{itemize}
 In conjunction with this, a simple channel will be created and random errors will be introduced after the image is encoded. Figure~\ref{fig: Block Diagram} shows the basic framework and block diagram of the proposed solution that will be implemented.
 
-\begin{figure}[h!]
+\begin{figure*}[t!]
 \renewcommand{\thefigure}{\arabic{figure}}
 \hspace{-0.5cm}
-\includegraphics[scale=0.16]{BlockDiagram.png}
+\includegraphics[scale=0.35]{BlockDiagram.png}
 \caption{Block diagram of the proposed strategy}
 \label{fig: Block Diagram}
-\end{figure}
+\end{figure*}
 
 \subsection{Step 1: Loading/Reading an Image into MATLAB}
 \label{sec: Step 1}
