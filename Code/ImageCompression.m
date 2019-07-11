@@ -42,7 +42,7 @@ axis.Visible = 'On';
 %% Step 3: Divide the image into the domain pool
 % First we need to know the height and the width of the image. From this
 % point, when "image" is used it refers to the converted grayscale image
-% and NOT the original colour image. 
+% and NOT the original colour image.
 
 [heightOfImage, widthOfImage] = size(imageToGray);
 
@@ -52,4 +52,24 @@ blocksDown = heightOfImage/8;
 totalNumberOfBlocks = blocksAcross * blocksDown;
 fprintf('Total number of blocks in the domain pool: %d \n', totalNumberOfBlocks);
 
-blocks = [imageToGray(1:8,1:8)]
+% Going row by row, the blocks in the domain pool are indexed from 1 to the
+% totalNumberOfBlocks. This is done by nested for loops. One way to test it
+% is to subtract an indexed block from/to the corresponding pixels from
+% imageToGray. If the resulting matrix from this subtraction is all 0s,
+% then the pixels are indexed correctly.
+blocks = cell(1, totalNumberOfBlocks);
+
+blockIndex = 1;
+
+for yIndex = 1:blocksDown
+    for xIndex = 1:blocksAcross
+        if (xIndex <= ((blocksAcross*8)-8))
+            blocks{blockIndex} = imageToGray(((8*yIndex)-7):(8*yIndex), ((8*xIndex)-7):(8*xIndex));
+            if (blockIndex < 2501)
+                blockIndex = blockIndex + 1;
+            end
+        end
+    end
+end
+
+
