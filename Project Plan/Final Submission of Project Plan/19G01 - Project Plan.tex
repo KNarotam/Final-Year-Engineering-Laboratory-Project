@@ -47,7 +47,7 @@ Witwatersrand, Private Bag 3, 2050, Johannesburg, South Africa}
 %----------------------------------------------------------------------------------------
 %	ABSTRACT
 %----------------------------------------------------------------------------------------
-\abstract{This report covers the project plan for the laboratory project based on image compression. The project plan looks at the specifications that will define a successful project implementation and a brief look at existing models of image compression. The proposed strategy involves an encoder and decoder side that will be implemented in MATLAB. The encoder side of the strategy involves: reading the image, converting to grayscale, dividing the image into a domain pool, creating holes in the image and compressing the image using known technique. The image is encoded and transmitted through a channel and random errors introduced. The decoder involves: decompressing the image, filling the holes and reconstructing the final image. A performance index is proposed as well as a look into cost management. Time management is discussed in detail with the aid of a Gantt chart and how the documentation of the project will be done.}
+\abstract{This report covers the project plan for the laboratory project based on image compression. The project plan looks at the specifications that will define a successful project implementation and a brief look at existing models of image compression. The proposed strategy involves an encoder and decoder side that will be implemented in MATLAB. The encoder side of the strategy involves: reading the image, converting to greyscale, dividing the image into a domain pool, creating holes in the image and compressing the image using known technique. The image is encoded and transmitted through a channel and random errors introduced. The decoder involves: decompressing the image, filling the holes and reconstructing the final image. A performance index is proposed as well as a look into cost management. Time management is discussed in detail with the aid of a Gantt chart and how the documentation of the project will be done.}
 
 \keywords{Image compression, DCT, MATLAB, Project Plan, Hole creation}
 
@@ -81,6 +81,13 @@ An image will be chosen for compression utilizing a compression technique and cr
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
+\begin{figure*}[t!]
+\renewcommand{\thefigure}{\arabic{figure}}
+\hspace{-0.5cm}
+\includegraphics[scale=0.35]{BlockDiagram.png}
+\caption{Block diagram of the proposed strategy}
+\label{fig: Block Diagram}
+\end{figure*}
 \section{EXISTING MODELS}
 \label{sec: Existing Models}
 Image compression is an application of data compression where an image file is encoded with a few bits with the overall goal of reducing the size of the image file compared to that of the original~\cite{ImageComp}. There are two main techniques of image compression:
@@ -119,19 +126,25 @@ Lossy compression removes some of the data from the original file, resulting in 
 \label{sec: Proposed Strategy}
 The proposed solution will be implemented in MATLAB and can be broken down into two main facets:
 \begin{itemize}
-\item Encoder side
-\item Decoder side.
+\item Encoder side:
+\begin{itemize}
+	\item Loading/Reading an Image into MATLAB
+	\item Converting the image to a greyscale image
+	\item Dividing the image into the domain pool
+	\item Creating holes in the smaller blocks
+	\item Compressing the image using a known technique (DCT/wavelets/fractal)
+\end{itemize}
+\item Decoder side:
+\begin{itemize}
+	\item Decode the image and error check
+	\item Decompress image (inverse DCT/wavelets/fractal)
+	\item Fill holes in the image
+\end{itemize}
 \end{itemize}
 In conjunction with this, a simple channel will be created and random errors will be introduced after the image is encoded. Figure~\ref{fig: Block Diagram} shows the basic framework and block diagram of the proposed solution that will be implemented.
 
-\begin{figure*}[t!]
-\renewcommand{\thefigure}{\arabic{figure}}
-\hspace{-0.5cm}
-\includegraphics[scale=0.35]{BlockDiagram.png}
-\caption{Block diagram of the proposed strategy}
-\label{fig: Block Diagram}
-\end{figure*}
-
+\section{ENCODER SIDE}
+\label{sec: Encoder Side}
 \subsection{Step 1: Loading/Reading an Image into MATLAB}
 \label{sec: Step 1}
 Firstly, an image is loaded into MATLAB, and a PNG or BMP image is specifically chosen with the dimensions $M\times N$, where $M$ and $N$ are divisible by 8. A PNG or BMP image is used as a JPEG image, is already a compressed image via the DCT image compression technique. Figure~\ref{fig: Step 1} shows an example of the image that can be used. 
@@ -193,7 +206,7 @@ With the domain pool created, holes are created by starting at the center square
 \renewcommand{\thefigure}{\arabic{figure}}
 \centering
 \includegraphics[scale=0.2]{Grid.png}
-\caption{How a $8\times 8$ block (gray square) will be checked for hole creation starting with the blue square.}
+\caption{How a $8\times 8$ block (grey square) will be checked for hole creation starting with the blue square.}
 \label{fig: Grid}
 \end{figure}
 
@@ -251,12 +264,23 @@ Figure~\ref{fig: Grid} shows how each of the $8\times 8$ squares in the domain p
 
 \subsection{Step 5: Compress image using a known technique (DCT/Fractal/Wavelets)}
 \label{sec: Step 5}
-The DCT compression technique will be utilized for the compression of the image. DCT will be performed on each block in the domain pool. DCT is implemented on a $8\times 8$ matrix, which is the reason the domain pool is made up of multiple $8\times 8$ blocks and that an image where the dimensions are divisible by 8 is chosen. The image is now compressed and can be transmitted via the channel.
+The DCT compression technique will be utilized for the compression of the image. DCT will be performed on each block in the domain pool. DCT is implemented on a $8\times 8$ matrix, which is the reason the domain pool is made up of multiple $8\times 8$ blocks and that an image where the dimensions are divisible by 8 is chosen. The image is now compressed and can be transmitted via the channel. MATLAB has a function built-in to perform the transform, however Equation~\ref{eqn: DCT} shows the mathematical representation of the transform. Fractal or wavelet transformation will be utilized 
+
+\begin{equation}
+\label{eqn: DCT}
+\begin{split}
+D(i,j) =& \frac{1}{\sqrt{2N}}C(i)C(j)\sum_{x=0}^{N-1}\sum_{y=0}^{N-1}p(x,y)\\
+& \cos \bigg[ {\frac{(2x+1)i\pi}{2N}}\bigg]\cos \bigg[{\frac{(2y+1)j\pi}{2N}}\bigg]
+\end{split}
+\end{equation}
 
 \subsection{Step 6: Encode and Transfer image}
 \label{sec: Step 6}
-The image is encoded as a binary message, and when transmitted through the channel, errors are randomly introduced. The data that will be sent through the channel will be a bit stream and the errors introduced will be based off of a byte with a probability of $10^{-3}$ where the byte can then be randomized. Alternatively each bit can be randomly selected, using the same probability above, to be prone to an error and the bit value flipped. 
+The image is encoded as a binary message, and when transmitted through the channel, errors are randomly introduced. The data that will be sent through the channel will be a bit stream and the errors introduced will be based off of a byte with a probability of $10^{-3}$ where the byte can then be randomized. Alternatively each bit can be randomly selected, using the same probability above, to be prone to an error and the bit value flipped.
 
+
+\section{DECODER SIDE}
+\label{sec: Decoder Side}
 \subsection{Step 7: Decode and Error Check}
 \label{sec: Step 7}
 Identification of the location of the errors is required. First, identifying the errors are required, and if detected must be corrected and then the image can be decoded. The image will be converted from a bit stream into its 2-dimensional matrix.
