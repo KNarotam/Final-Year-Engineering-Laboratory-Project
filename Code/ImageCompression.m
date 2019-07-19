@@ -12,8 +12,7 @@ clc
 % file is read into MATLAB, it's read in as a 3 dimensional matrix. We
 % display the image for manual debugging.
 
-userPrompt = 'What is the name of the file? ';
-fileName = input(userPrompt, 's');
+fileName = uigetfile('*.*');
 uploadedImage = imread(fileName);
 
 % Display the uploaded image. The axis do not show, so we set the
@@ -29,12 +28,12 @@ axis.Visible = 'On';
 % dimension is the colour map. So converting the image to grayscale will
 % make the uploaded image into a 2 dimensional array.
 
-imageToGray = rgb2gray(uploadedImage);
+grayImage = rgb2gray(uploadedImage);
 
 % Display the uploaded image into grayscale. Again, the axis does not show,
 % so we set the visibility to be on.
 subplot(1,3,2)
-imshow(imageToGray);
+imshow(grayImage);
 title(strcat('Grayscale image: ', fileName));
 axis = gca;
 axis.Visible = 'On';
@@ -44,7 +43,7 @@ axis.Visible = 'On';
 % point, when "image" is used it refers to the converted grayscale image
 % and NOT the original colour image.
 
-[heightOfImage, widthOfImage] = size(imageToGray);
+[heightOfImage, widthOfImage] = size(grayImage);
 
 % Time to determine the number of 8x8 squares in the domain pool
 blocksAcross = widthOfImage/8;
@@ -64,7 +63,7 @@ blockIndex = 1;
 for yIndex = 1:blocksDown
     for xIndex = 1:blocksAcross
         if (xIndex <= ((blocksAcross*8)-8))
-            blocks{blockIndex} = imageToGray(((8*yIndex)-7):(8*yIndex), ((8*xIndex)-7):(8*xIndex));
+            blocks{blockIndex} = grayImage(((8*yIndex)-7):(8*yIndex), ((8*xIndex)-7):(8*xIndex));
             if (blockIndex < totalNumberOfBlocks + 1)
                 blockIndex = blockIndex + 1;
             end
@@ -156,7 +155,7 @@ end
 bIndex = 1;
 for yIndex = 1:blocksDown
     for xIndex = 1:blocksAcross
-        holes((8*yIndex)-7:(yIndex*8), (8*xIndex)-7:(xIndex*8)) = blocks{bIndex};
+        holesImage((8*yIndex)-7:(yIndex*8), (8*xIndex)-7:(xIndex*8)) = blocks{bIndex};
         bIndex = bIndex+1;
     end
 end
@@ -164,7 +163,82 @@ end
 % The axis do not show, so we set the visibility to be on in order to see
 % the pixels.
 subplot(1,3,3)
-imshow(holes)
+imshow(holesImage)
 title(strcat('Grayscale image with holes: ', fileName));
 axis = gca;
 axis.Visible = 'On';
+
+%% Step 5: Compressing the image using a known technique
+% Using known techniques, we perform the compression of the chosen image.
+% First we start by performing th dct on the image itself so that we can
+% see where the majority of the intensity is.
+
+intensityImage = dct2(holesImage);
+figure
+subplot(2,2,1)
+imshow(intensityImage);
+title(strcat('Image showing the intensity (amplitude) of the image for: ', fileName));
+
+% We create an input dialog box so we can get the compression depth for the
+% image. The number will be between 1 and 8, and will determine how much
+% compression will take place.
+
+compressionDepth = inputdlg('Choose the compression depth value (1-8):', 'Enter the value for compression depth', [1 70]);
+
+compressionDepth = str2double(compressionDepth);
+
+% Now to perform the actual dct compression on 8x8 blocks, we can create
+% empty domain pools. This will be for the quantized image and idct and
+% final compressed image.
+
+quantizedBlocks = cell(1, totalNumberOfBlocks);
+idctBlocks = cell(1, totalNumberOfBlocks);
+compressedBlocks = cell(1, totalNumberOfBlocks);
+
+
+for i = 1:totalNumberOfBlocks
+    f = blocks{i};
+    dctTemp = dct2(f);
+    quantizedBlocks{i} = dctTemp;
+    idctTemp = idct2(dctTemp);
+    blocks{i} = idctTemp;
+    
+    dctTemp(8:-1:compressionDepth+1, :) = 0;
+    dctTemp(:, 8:-1:compressionDepth+1) = 0;
+    idctBlocks{i} = dctTemp;
+    idctTemp = idct2(dctTemp);
+    compressedBlocks{i} = idctTemp;
+    
+end
+
+bIndex = 1;
+for yIndex = 1:blocksDown
+    for xIndex = 1:blocksAcross
+        quantizedImage((8*yIndex)-7:(yIndex*8), (8*xIndex)-7:(xIndex*8)) = quantizedBlocks{bIndex};
+        bIndex = bIndex+1;
+    end
+end
+
+subplot(2,2,2)
+imshow(quantizedImage)
+title(strcat('Quantized DCT of: ', fileName))
+
+bIndex = 1;
+for yIndex = 1:blocksDown
+    for xIndex = 1:blocksAcross
+        compressedImage((8*yIndex)-7:(yIndex*8), (8*xIndex)-7:(xIndex*8)) = compressedBlocks{bIndex};
+        bIndex = bIndex+1;
+    end
+end
+
+subplot(2,2,3)
+imshow(holesImage)
+title(strcat('Image before compression: ', fileName))
+imwrite(holesImage, 'abc.png');
+
+compressedImage255 = compressedImage/255;
+
+subplot(2,2,4)
+imshow(compressedImage255)
+title(strcat('Image after compression: ', fileName))
+imwrite(compressedImage255, 'abc2.png');
