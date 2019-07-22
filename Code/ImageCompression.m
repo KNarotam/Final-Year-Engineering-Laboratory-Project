@@ -5,6 +5,7 @@
 
 clear all
 clc
+close all
 
 %% Step 1: Loading an Image
 % We  are going to load the image into MATLAB, asking for the name of the
@@ -178,13 +179,15 @@ figure
 subplot(2,2,1)
 imshow(intensityImage);
 title(strcat('Image showing the intensity (amplitude) of the image for: ', fileName));
+axis = gca;
+axis.Visible = 'On';
 
 % We create an input dialog box so we can get the compression depth for the
 % image. The number will be between 1 and 8, and will determine how much
 % compression will take place.
 
 compressionDepth = inputdlg('Choose the compression depth value (1-8):', 'Enter the value for compression depth', [1 70]);
-
+testString = strcat(' Compression depth = ', compressionDepth);
 compressionDepth = str2double(compressionDepth);
 
 % Now to perform the actual dct compression on 8x8 blocks, we can create
@@ -234,11 +237,123 @@ end
 subplot(2,2,3)
 imshow(holesImage)
 title(strcat('Image before compression: ', fileName))
-imwrite(holesImage, 'abc.png');
+axis = gca;
+axis.Visible = 'On';
+% imwrite(holesImage, 'abc.png');
 
 compressedImage255 = compressedImage/255;
 
+
 subplot(2,2,4)
 imshow(compressedImage255)
-title(strcat('Image after compression: ', fileName))
-imwrite(compressedImage255, 'abc2.png');
+title(strcat('Image after compression: ', fileName, testString))
+axis = gca;
+axis.Visible = 'On';
+% imwrite(compressedImage255, 'abc2.png');
+
+%% Step 6: Encoding and introducing errors into the image
+
+
+
+%% Step 7: Filling in the holes
+
+for q = 1:totalNumberOfBlocks
+    
+    block2x2 = compressedBlocks{q}(4:5,4:5);
+    
+    average = mean(block2x2, 'all');
+    
+    counter = 1;
+    for i = 1:2
+        for j = 1:2
+            temp1(counter) = pdist([block2x2(i,j); average], 'chebychev');
+            counter = counter + 1;
+        end
+    end
+    
+    if (all(temp1 < 8))
+        block4x4 = compressedBlocks{q}(3:6, 3:6);
+        
+        average = mean(block4x4, 'all');
+        
+        counter = 1;
+        for i = 1:4
+            for j = 1:4
+                temp2(counter) = pdist([block4x4(i,j); average], 'chebychev');
+                counter = counter + 1;
+            end
+        end
+        if (all(temp2 < 8))
+            block6x6 = compressedBlocks{q}(2:7, 2:7);
+            average = mean(block6x6, 'all');
+            
+            counter = 1;
+            for i = 1:6
+                for j = 1:6
+                    temp3(counter) = pdist([block6x6(i,j); average], 'chebychev');
+                    counter = counter + 1;
+                end
+            end
+            
+            if (all(temp3 < 8))
+                for rowPoint = 2:7
+                    for colPoint = 2:7
+                        compressedBlocks{q}(rowPoint,colPoint) = ...
+                            (compressedBlocks{q}(rowPoint-1,colPoint-1) ...
+                            + compressedBlocks{q}(rowPoint-1,colPoint) ...
+                            + compressedBlocks{q}(rowPoint,colPoint-1))/3;
+                    end
+                end
+                
+            else
+                for rowPoint = 3:6
+                    for colPoint = 3:6
+                        compressedBlocks{q}(rowPoint,colPoint) = ...
+                            (compressedBlocks{q}(rowPoint-1,colPoint-1) ...
+                            + compressedBlocks{q}(rowPoint-1,colPoint) ...
+                            + compressedBlocks{q}(rowPoint,colPoint-1))/3;
+                    end
+                end
+            end
+            
+            
+        else
+            for rowPoint = 4:5
+                for colPoint = 4:5
+                    compressedBlocks{q}(rowPoint,colPoint) = ...
+                        (compressedBlocks{q}(rowPoint-1,colPoint-1) ...
+                        + compressedBlocks{q}(rowPoint-1,colPoint) ...
+                        + compressedBlocks{q}(rowPoint,colPoint-1))/3;
+                end
+            end
+            
+        end
+        
+    end
+    
+end
+
+
+bIndex = 1;
+for yIndex = 1:blocksDown
+    for xIndex = 1:blocksAcross
+        reconstructedImage((8*yIndex)-7:(yIndex*8), (8*xIndex)-7:(xIndex*8)) = compressedBlocks{bIndex};
+        bIndex = bIndex+1;
+    end
+end
+
+reconstructedImage255 = reconstructedImage/255;
+
+figure
+subplot(1,2,1)
+imshow(grayImage)
+title(strcat('Orignal Image: ', fileName))
+axis = gca;
+axis.Visible = 'On';
+
+
+subplot(1,2,2)
+imshow(reconstructedImage255)
+title(strcat('Reconstructed Image: ', fileName))
+axis = gca;
+axis.Visible = 'On';
