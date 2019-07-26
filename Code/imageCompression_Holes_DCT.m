@@ -1,4 +1,4 @@
-%% Image Compression based on Non-Parametric Sampling in Noisy Environments
+%% Image Compression based on Non-Parametric Sampling in Noisy Environments (Compression using Holes and DCT)
 % Authors: 19G01: Kishan Narotam (717 931) & Nitesh Nana (720 064)
 
 %% Clear workspace and command window
@@ -110,11 +110,11 @@ for q = 1:totalNumberOfBlocks
         average = mean(block4x4, 'all');
         
         % With the square size for the hole now increasing to a 4x4 size,
-        % all 16 pixels are checked to see if a larger hole can be
-        % created. The reason the smaller hole is not created first is due
-        % to the hole (all values of 0), it changes the value of the
-        % average of the entire square. Only if this 4x4 square cannot be
-        % a hole, will it create the smaller hole.
+        % all 16 pixels are checked to see if a larger hole can be created.
+        % The reason the smaller hole is not created first is due to the
+        % hole (all values of 0), it changes the value of the average of
+        % the entire square. Only if this 4x4 square cannot be a hole, will
+        % it create the smaller hole.
         counter = 1;
         for i = 1:4
             for j = 1:4
@@ -214,6 +214,8 @@ for i = 1:totalNumberOfBlocks
     
 end
 
+
+% We reconstruct the quantized blocks into an image
 bIndex = 1;
 for yIndex = 1:blocksDown
     for xIndex = 1:blocksAcross
@@ -226,6 +228,7 @@ subplot(2,2,2)
 imshow(quantizedImage)
 title(strcat('Quantized DCT of: ', fileName))
 
+% We reconstruct the compressed Image
 bIndex = 1;
 for yIndex = 1:blocksDown
     for xIndex = 1:blocksAcross
@@ -271,7 +274,7 @@ for q = 1:totalNumberOfBlocks
         end
     end
     
-    if (all(temp1 < 8))
+    if (all(temp1 < 5))
         block4x4 = compressedBlocks{q}(3:6, 3:6);
         
         average = mean(block4x4, 'all');
@@ -283,7 +286,7 @@ for q = 1:totalNumberOfBlocks
                 counter = counter + 1;
             end
         end
-        if (all(temp2 < 8))
+        if (all(temp2 < 5))
             block6x6 = compressedBlocks{q}(2:7, 2:7);
             average = mean(block6x6, 'all');
             
@@ -295,7 +298,7 @@ for q = 1:totalNumberOfBlocks
                 end
             end
             
-            if (all(temp3 < 8))
+            if (all(temp3 < 5))
                 for rowPoint = 2:7
                     for colPoint = 2:7
                         compressedBlocks{q}(rowPoint,colPoint) = ...

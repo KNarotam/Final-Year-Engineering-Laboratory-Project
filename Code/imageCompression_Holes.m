@@ -1,10 +1,11 @@
-%% Image Compression based on Non-Parametric Sampling in Noisy Environments
+%% Image Compression based on Non-Parametric Sampling in Noisy Environments (Compression using Holes)
 % Authors: 19G01: Kishan Narotam (717 931) & Nitesh Nana (720 064)
 
 %% Clear workspace and command window
 
 clear all
 clc
+close all
 
 %% Step 1: Loading an Image
 % We  are going to load the image into MATLAB, asking for the name of the
@@ -12,13 +13,12 @@ clc
 % file is read into MATLAB, it's read in as a 3 dimensional matrix. We
 % display the image for manual debugging.
 
-userPrompt = 'What is the name of the file? ';
-fileName = input(userPrompt, 's');
+fileName = uigetfile('*.*');
 uploadedImage = imread(fileName);
 
 % Display the uploaded image. The axis do not show, so we set the
 % visibility to be on in order to see the pixels
-subplot(1,2,1)
+subplot(2,3,1)
 imshow(uploadedImage);
 title(strcat('Original image: ', fileName));
 axis = gca;
@@ -29,22 +29,23 @@ axis.Visible = 'On';
 % dimension is the colour map. So converting the image to grayscale will
 % make the uploaded image into a 2 dimensional array.
 
-imageToGray = rgb2gray(uploadedImage);
+grayImage = rgb2gray(uploadedImage);
 
 % Display the uploaded image into grayscale. Again, the axis does not show,
 % so we set the visibility to be on.
-subplot(1,2,2)
-imshow(imageToGray);
+subplot(2,3,2)
+imshow(grayImage);
 title(strcat('Grayscale image: ', fileName));
 axis = gca;
 axis.Visible = 'On';
+%imwrite(grayImage, 'OGGray.png');
 
 %% Step 3: Divide the image into the domain pool
 % First we need to know the height and the width of the image. From this
 % point, when "image" is used it refers to the converted grayscale image
 % and NOT the original colour image.
 
-[heightOfImage, widthOfImage] = size(imageToGray);
+[heightOfImage, widthOfImage] = size(grayImage);
 
 % Time to determine the number of 8x8 squares in the domain pool
 blocksAcross = widthOfImage/8;
@@ -64,7 +65,7 @@ blockIndex = 1;
 for yIndex = 1:blocksDown
     for xIndex = 1:blocksAcross
         if (xIndex <= ((blocksAcross*8)-8))
-            blocks{blockIndex} = imageToGray(((8*yIndex)-7):(8*yIndex), ((8*xIndex)-7):(8*xIndex));
+            blocks{blockIndex} = grayImage(((8*yIndex)-7):(8*yIndex), ((8*xIndex)-7):(8*xIndex));
             if (blockIndex < totalNumberOfBlocks + 1)
                 blockIndex = blockIndex + 1;
             end
@@ -106,9 +107,15 @@ for q = 1:totalNumberOfBlocks
     % checked.
     if (all(temp1 < 5))
         block4x4 = blocks{q}(3:6, 3:6);
-
+        
         average = mean(block4x4, 'all');
         
+        % With the square size for the hole now increasing to a 4x4 size,
+        % all 16 pixels are checked to see if a larger hole can be created.
+        % The reason the smaller hole is not created first is due to the
+        % hole (all values of 0), it changes the value of the average of
+        % the entire square. Only if this 4x4 square cannot be a hole, will
+        % it create the smaller hole.
         counter = 1;
         for i = 1:4
             for j = 1:4
@@ -144,13 +151,126 @@ for q = 1:totalNumberOfBlocks
     
 end
 
+% As a way of recontructing the image, we take each indexed block from the
+% domain pool and combine it into 1 large 2D array that is the grayscale
+% image with holes present.
 bIndex = 1;
 for yIndex = 1:blocksDown
     for xIndex = 1:blocksAcross
-        holes((8*yIndex)-7:(yIndex*8), (8*xIndex)-7:(xIndex*8)) = blocks{bIndex};
+        holesImage((8*yIndex)-7:(yIndex*8), (8*xIndex)-7:(xIndex*8)) = blocks{bIndex};
         bIndex = bIndex+1;
     end
 end
 
-figure
-imshow(holes)
+% The axis do not show, so we set the visibility to be on in order to see
+% the pixels.
+subplot(2,3,3)
+imshow(holesImage)
+title(strcat('Grayscale image with holes: ', fileName));
+axis = gca;
+axis.Visible = 'On';
+
+%% Step 6: Encoding and introducing errors into the image
+
+
+
+%% Step 7: Filling in the holes
+
+for i = 1:totalNumberOfBlocks
+    blocks{i} = double(blocks{i});
+end
+
+
+for q = 1:totalNumberOfBlocks
+    
+    block2x2 = blocks{q}(4:5,4:5);
+    
+    average = mean(block2x2, 'all');
+    
+    counter = 1;
+    for i = 1:2
+        for j = 1:2
+            temp1(counter) = pdist([block2x2(i,j); average], 'chebychev');
+            counter = counter + 1;
+        end
+    end
+    
+    if (all(temp1 < 5))
+        block4x4 = blocks{q}(3:6, 3:6);
+        
+        average = mean(block4x4, 'all');
+        
+        counter = 1;
+        for i = 1:4
+            for j = 1:4
+                temp2(counter) = pdist([block4x4(i,j); average], 'chebychev');
+                counter = counter + 1;
+            end
+        end
+        if (all(temp2 < 5))
+            block6x6 = blocks{q}(2:7, 2:7);
+            average = mean(block6x6, 'all');
+            
+            counter = 1;
+            for i = 1:6
+                for j = 1:6
+                    temp3(counter) = pdist([block6x6(i,j); average], 'chebychev');
+                    counter = counter + 1;
+                end
+            end
+            
+            if (all(temp3 < 5))
+                for rowPoint = 2:7
+                    for colPoint = 2:7
+                        blocks{q}(rowPoint,colPoint) = ...
+                            (blocks{q}(rowPoint-1,colPoint-1) ...
+                            + blocks{q}(rowPoint-1,colPoint) ...
+                            + blocks{q}(rowPoint,colPoint-1))/3;
+                    end
+                end
+                
+            else
+                for rowPoint = 3:6
+                    for colPoint = 3:6
+                        blocks{q}(rowPoint,colPoint) = ...
+                            (blocks{q}(rowPoint-1,colPoint-1) ...
+                            + blocks{q}(rowPoint-1,colPoint) ...
+                            + blocks{q}(rowPoint,colPoint-1))/3;
+                    end
+                end
+            end
+            
+            
+        else
+            for rowPoint = 4:5
+                for colPoint = 4:5
+                    blocks{q}(rowPoint,colPoint) = ...
+                        (blocks{q}(rowPoint-1,colPoint-1) ...
+                        + blocks{q}(rowPoint-1,colPoint) ...
+                        + blocks{q}(rowPoint,colPoint-1))/3;
+                end
+            end
+            
+        end
+        
+    end
+    
+end
+
+
+bIndex = 1;
+for yIndex = 1:blocksDown
+    for xIndex = 1:blocksAcross
+        reconstructedImage((8*yIndex)-7:(yIndex*8), (8*xIndex)-7:(xIndex*8)) = blocks{bIndex};
+        bIndex = bIndex+1;
+    end
+end
+
+reconstructedImage255 = reconstructedImage/255;
+
+subplot(2,3,5)
+imshow(reconstructedImage255)
+title(strcat('Reconstructed Image: ', fileName))
+axis = gca;
+axis.Visible = 'On';
+%imwrite(reconstructedImage255, 'ReconGray.png');
