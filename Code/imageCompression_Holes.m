@@ -105,7 +105,7 @@ for q = 1:totalNumberOfBlocks
     % the square size is increased from 2x2 to 4x4. If one value is 5 or
     % more, no hole is created and the next block in the domain pool is
     % checked.
-    if (all(temp1 < 5))
+    if (all(temp1 < 6))
         block4x4 = blocks{q}(3:6, 3:6);
         
         average = mean(block4x4, 'all');
@@ -123,7 +123,7 @@ for q = 1:totalNumberOfBlocks
                 counter = counter + 1;
             end
         end
-        if (all(temp2 < 5))
+        if (all(temp2 < 6))
             block6x6 = blocks{q}(2:7, 2:7);
             average = mean(block6x6, 'all');
             
@@ -135,7 +135,7 @@ for q = 1:totalNumberOfBlocks
                 end
             end
             
-            if (all(temp3 < 5))
+            if (all(temp3 < 6))
                 blocks{q}(2:7, 2:7) = 0;
                 
             else
@@ -170,20 +170,21 @@ title(strcat('Grayscale image with holes: ', fileName));
 axis = gca;
 axis.Visible = 'On';
 
-%% Step 6: Encoding and introducing errors into the image
+%% Step 5: Encoding and introducing errors into the image
 
 
 
-%% Step 7: Filling in the holes
+%% Step 6: Filling in the holes
 
+filledImage = cell(1, totalNumberOfBlocks);
 for i = 1:totalNumberOfBlocks
-    blocks{i} = double(blocks{i});
+    filledImage{i} = double(blocks{i});
 end
 
 
 for q = 1:totalNumberOfBlocks
     
-    block2x2 = blocks{q}(4:5,4:5);
+    block2x2 = filledImage{q}(4:5,4:5);
     
     average = mean(block2x2, 'all');
     
@@ -195,8 +196,8 @@ for q = 1:totalNumberOfBlocks
         end
     end
     
-    if (all(temp1 < 5))
-        block4x4 = blocks{q}(3:6, 3:6);
+    if (all(temp1 < 6))
+        block4x4 = filledImage{q}(3:6, 3:6);
         
         average = mean(block4x4, 'all');
         
@@ -207,8 +208,8 @@ for q = 1:totalNumberOfBlocks
                 counter = counter + 1;
             end
         end
-        if (all(temp2 < 5))
-            block6x6 = blocks{q}(2:7, 2:7);
+        if (all(temp2 < 6))
+            block6x6 = filledImage{q}(2:7, 2:7);
             average = mean(block6x6, 'all');
             
             counter = 1;
@@ -219,23 +220,23 @@ for q = 1:totalNumberOfBlocks
                 end
             end
             
-            if (all(temp3 < 5))
+            if (all(temp3 < 6))
                 for rowPoint = 2:7
                     for colPoint = 2:7
-                        blocks{q}(rowPoint,colPoint) = ...
-                            (blocks{q}(rowPoint-1,colPoint-1) ...
-                            + blocks{q}(rowPoint-1,colPoint) ...
-                            + blocks{q}(rowPoint,colPoint-1))/3;
+                        filledImage{q}(rowPoint,colPoint) = ...
+                            (filledImage{q}(rowPoint-1,colPoint-1) ...
+                            + filledImage{q}(rowPoint-1,colPoint) ...
+                            + filledImage{q}(rowPoint,colPoint-1))/3;
                     end
                 end
                 
             else
                 for rowPoint = 3:6
                     for colPoint = 3:6
-                        blocks{q}(rowPoint,colPoint) = ...
-                            (blocks{q}(rowPoint-1,colPoint-1) ...
-                            + blocks{q}(rowPoint-1,colPoint) ...
-                            + blocks{q}(rowPoint,colPoint-1))/3;
+                        filledImage{q}(rowPoint,colPoint) = ...
+                            (filledImage{q}(rowPoint-1,colPoint-1) ...
+                            + filledImage{q}(rowPoint-1,colPoint) ...
+                            + filledImage{q}(rowPoint,colPoint-1))/3;
                     end
                 end
             end
@@ -244,10 +245,10 @@ for q = 1:totalNumberOfBlocks
         else
             for rowPoint = 4:5
                 for colPoint = 4:5
-                    blocks{q}(rowPoint,colPoint) = ...
-                        (blocks{q}(rowPoint-1,colPoint-1) ...
-                        + blocks{q}(rowPoint-1,colPoint) ...
-                        + blocks{q}(rowPoint,colPoint-1))/3;
+                    filledImage{q}(rowPoint,colPoint) = ...
+                        (filledImage{q}(rowPoint-1,colPoint-1) ...
+                        + filledImage{q}(rowPoint-1,colPoint) ...
+                        + filledImage{q}(rowPoint,colPoint-1))/3;
                 end
             end
             
@@ -261,7 +262,7 @@ end
 bIndex = 1;
 for yIndex = 1:blocksDown
     for xIndex = 1:blocksAcross
-        reconstructedImage((8*yIndex)-7:(yIndex*8), (8*xIndex)-7:(xIndex*8)) = blocks{bIndex};
+        reconstructedImage((8*yIndex)-7:(yIndex*8), (8*xIndex)-7:(xIndex*8)) = filledImage{bIndex};
         bIndex = bIndex+1;
     end
 end
