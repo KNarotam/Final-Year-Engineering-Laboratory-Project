@@ -24,6 +24,7 @@ title(strcat('Original image: ', fileName));
 axis = gca;
 axis.Visible = 'On';
 
+tic
 %% Step 2: Convert the image to grayscale
 % Dealing with a 3 dimensional matrix is a challenge, as the third
 % dimension is the colour map. So converting the image to grayscale will
@@ -38,7 +39,7 @@ imshow(grayImage);
 title(strcat('Grayscale image: ', fileName));
 axis = gca;
 axis.Visible = 'On';
-%imwrite(grayImage, 'OGGray.png');
+imwrite(grayImage, 'TestGrey.gif')
 
 %% Step 3: Divide the image into the domain pool
 % First we need to know the height and the width of the image. From this
@@ -170,15 +171,138 @@ title(strcat('Grayscale image with holes: ', fileName));
 axis = gca;
 axis.Visible = 'On';
 
-%% Step 5: Encoding and introducing errors into the image
+%% Step 5: Encoding the image using Run-Length Ecoding
+
+% The algorithm for run-length encoding was modified and adapted from an
+% implmentation that was found on the MathWorks File Exchange database. The
+% following comment block is the license to use the code after being
+% modified.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Copyright (c) 2011, Abdulrahman Siddiq
+% All rights reserved.
+%
+% Redistribution and use in source and binary forms, with or without
+% modification, are permitted provided that the following conditions are
+% met:
+%
+%     * Redistributions of source code must retain the above copyright
+%       notice, this list of conditions and the following disclaimer.
+%     * Redistributions in binary form must reproduce the above copyright
+%       notice, this list of conditions and the following disclaimer in
+%       the documentation and/or other materials provided with the distribution
+%
+% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+% AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+% IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+% ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+% LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+% CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+% SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+% INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+% CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+% ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+% POSSIBILITY OF SUCH DAMAGE.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The code is modified for the use of this compression technique.
+
+encodedValues = cell(1, totalNumberOfBlocks*8);
+encodedCount = cell(1, totalNumberOfBlocks*8);
+encoderCounter = 1;
+
+for i = 1:totalNumberOfBlocks
+    
+    encodingBlock = double(blocks{i});
+    
+    for j = 1:8
+        
+        encodingRow = encodingBlock(j, 1:8);
+        index = 1;
+        encodedValues{encoderCounter}(index) = encodingRow(1);
+        encodedCount{encoderCounter}(index) = 1;
+        
+        for k = 2:length(encodingRow)
+            if (encodingRow(k-1) == encodingRow(k))
+                encodedCount{encoderCounter}(index) = encodedCount{encoderCounter}(index)+1;
+            else
+                index = index + 1;
+                encodedValues{encoderCounter}(index) = encodingRow(k);
+                encodedCount{encoderCounter}(index) = 1;
+            end
+            
+        end
+        encoderCounter = encoderCounter + 1;
+        
+    end
+    
+    
+end
 
 
+%% Step 6: Introducing Errors
 
-%% Step 6: Filling in the holes
+
+%% Step 7: Decoding the Image using Run-Length Decoding
+
+% The algorithm for run-length decoding was modified and adapted from an
+% implmentation that was found on the MathWorks File Exchange database. The
+% following comment block is the license to use the code after being
+% modified.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Copyright (c) 2011, Abdulrahman Siddiq
+% All rights reserved.
+%
+% Redistribution and use in source and binary forms, with or without
+% modification, are permitted provided that the following conditions are
+% met:
+%
+%     * Redistributions of source code must retain the above copyright
+%       notice, this list of conditions and the following disclaimer.
+%     * Redistributions in binary form must reproduce the above copyright
+%       notice, this list of conditions and the following disclaimer in
+%       the documentation and/or other materials provided with the distribution
+%
+% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+% AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+% IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+% ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+% LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+% CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+% SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+% INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+% CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+% ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+% POSSIBILITY OF SUCH DAMAGE.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The code is modified for the use of this compression technique.
+
+decodedImage = cell(1, totalNumberOfBlocks);
+decoderCounter = 1;
+
+for i = 1:totalNumberOfBlocks
+    
+    for row = 1:8
+        decodedRow = [];
+        for j = 1:length(encodedValues{decoderCounter})
+            decodedRow = [decodedRow encodedValues{decoderCounter}(j)*ones(1,encodedCount{decoderCounter}(j))];
+        end
+        decoderCounter = decoderCounter + 1;
+        decodedImage{i}(row, :) = decodedRow;
+    end
+    
+end
+
+
+%% Step 8: Filling in the holes
 
 filledImage = cell(1, totalNumberOfBlocks);
 for i = 1:totalNumberOfBlocks
-    filledImage{i} = double(blocks{i});
+    filledImage{i} = double(decodedImage{i});
 end
 
 
@@ -274,4 +398,6 @@ imshow(reconstructedImage255)
 title(strcat('Reconstructed Image: ', fileName))
 axis = gca;
 axis.Visible = 'On';
-%imwrite(reconstructedImage255, 'ReconGray.png');
+imwrite(reconstructedImage, 'ReconGray.gif');
+
+toc

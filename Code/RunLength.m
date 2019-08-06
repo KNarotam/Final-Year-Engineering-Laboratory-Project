@@ -1,21 +1,24 @@
 % Run the main program without DCT to get the blocks variable
-
-[row, col] = size(blocks{1});
+clc
+[row, col] = size(blocks{1})
 test = zeros(row, col);
-for k = 1:row
-    
+for k = 1:1
+    fprintf('Working on row %d', k);
     A=blocks{1}(k, 1:8)
     
     % First we find difference between adjacent elements and its converted
     % to a logical format
     
-    F=[logical(diff(A)) 1];
+    F=[logical(diff(A))]
     
-    % Find the position of the elements that has the values
-    In=find(F~=0);
+    % Find the position of the elebments that has the values
+    In=find(F~=0)
     
-    Ele=A(In);
+    Ele=A(In)
     
+%     if (size(In) > 1 && In(1) == 0)
+%         In(1) = 1
+%     end
     C=[In(1) diff(In)];
     
     Result=zeros([numel(Ele) 2]);
