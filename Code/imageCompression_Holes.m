@@ -244,27 +244,64 @@ end
 
 %% Step 6: Introducing Errors
 
-for i = 1:length(encodedValues)
-    sizeOfValue = length(encodedValues{i});
-    probability = randi([1 1000]);
-    if (probability > 700)
-        if (sizeOfValue == 1)
-            
-            temp = encodedValues{i};
-            temp = decimalToBinaryVector(temp, 8, 'MSBFirst');
-            invertedTemp = ~temp;
-            invertedTemp = double(invertedTemp);
-            encodedValues{i} = binaryVectorToDecimal(invertedTemp, 'MSBFirst');
-            
-        else
-            position = randi([1 length(encodedValues{i})]);
-            temp = encodedValues{i}(position);
-            temp = decimalToBinaryVector(temp, 8, 'MSBFirst');
-            invertedTemp = ~temp;
-            invertedTemp = double(invertedTemp);
-            encodedValues{i}(position) = binaryVectorToDecimal(invertedTemp, 'MSBFirst');
-            
+list = {'Ones Compliment', 'Individual Bit Flip'};
+[ErrorMode, rf] = listdlg('PromptString', 'Select a method', 'SelectionMode', 'single', 'ListString', list);
+ErrorMode
+if (ErrorMode == 1)
+    fprintf('Ones compliment chosen');
+    for i = 1:length(encodedValues)
+        sizeOfValue = length(encodedValues{i});
+        probability = randi([1 1000]);
+        if (probability > 400)
+            if (sizeOfValue == 1)
+                
+                temp = encodedValues{i};
+                temp = decimalToBinaryVector(temp, 8, 'MSBFirst');
+                invertedTemp = ~temp;
+                invertedTemp = double(invertedTemp);
+                encodedValues{i} = binaryVectorToDecimal(invertedTemp, 'MSBFirst');
+                
+            else
+                position = randi([1 length(encodedValues{i})]);
+                temp = encodedValues{i}(position);
+                temp = decimalToBinaryVector(temp, 8, 'MSBFirst');
+                invertedTemp = ~temp;
+                invertedTemp = double(invertedTemp);
+                encodedValues{i}(position) = binaryVectorToDecimal(invertedTemp, 'MSBFirst');
+                
+            end
         end
+        
+    end
+elseif (ErrorMode == 2)
+    fprintf('Bit flip chosen');
+    randomBit = randi([1 8]);
+    
+    for i = 1:length(encodedValues)
+        sizeOfValue = length(encodedValues{i});
+        probability = randi([1 1000]);
+        
+        if (probability > 0)
+            if (sizeOfValue == 1)
+                temp = encodedValues{i};
+                temp = decimalToBinaryVector(temp, 8, 'MSBFirst');
+                invertedTemp = temp;
+                invertedTemp(randomBit) = ~invertedTemp(randomBit);
+                invertedTemp = double(invertedTemp);
+                encodedValues{i} = binaryVectorToDecimal(invertedTemp, 'MSBFirst');
+                
+            else
+                position = randi([1 length(encodedValues{i})]);
+                temp = encodedValues{i}(position);
+                temp = decimalToBinaryVector(temp, 8, 'MSBFirst');
+                invertedTemp = temp;
+                invertedTemp(randomBit) = ~invertedTemp(randomBit);
+                invertedTemp = double(invertedTemp);
+                encodedValues{i}(position) = binaryVectorToDecimal(invertedTemp, 'MSBFirst');
+                
+            end
+        end
+        
     end
     
 end
