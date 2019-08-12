@@ -39,7 +39,8 @@ imshow(grayImage);
 title(strcat('Grayscale image: ', fileName));
 axis = gca;
 axis.Visible = 'On';
-imwrite(grayImage, 'TestGrey.gif')
+imwrite(grayImage, 'OriginalImage.tif')
+imwrite(grayImage, 'OriginalImage.bmp')
 
 %% Step 3: Divide the image into the domain pool
 % First we need to know the height and the width of the image. From this
@@ -243,6 +244,30 @@ end
 
 %% Step 6: Introducing Errors
 
+for i = 1:length(encodedValues)
+    sizeOfValue = length(encodedValues{i});
+    probability = randi([1 1000]);
+    if (probability > 700)
+        if (sizeOfValue == 1)
+            
+            temp = encodedValues{i};
+            temp = decimalToBinaryVector(temp, 8, 'MSBFirst');
+            invertedTemp = ~temp;
+            invertedTemp = double(invertedTemp);
+            encodedValues{i} = binaryVectorToDecimal(invertedTemp, 'MSBFirst');
+            
+        else
+            position = randi([1 length(encodedValues{i})]);
+            temp = encodedValues{i}(position);
+            temp = decimalToBinaryVector(temp, 8, 'MSBFirst');
+            invertedTemp = ~temp;
+            invertedTemp = double(invertedTemp);
+            encodedValues{i}(position) = binaryVectorToDecimal(invertedTemp, 'MSBFirst');
+            
+        end
+    end
+    
+end
 
 %% Step 7: Decoding the Image using Run-Length Decoding
 
@@ -398,6 +423,7 @@ imshow(reconstructedImage255)
 title(strcat('Reconstructed Image: ', fileName))
 axis = gca;
 axis.Visible = 'On';
-imwrite(reconstructedImage, 'ReconGray.gif');
+imwrite(reconstructedImage255, 'CompressedImage.tif');
+imwrite(reconstructedImage255, 'CompressedImage.jpeg');
 
 toc
