@@ -246,13 +246,17 @@ end
 
 list = {'Ones Compliment', 'Individual Bit Flip'};
 [ErrorMode, rf] = listdlg('PromptString', 'Select a method', 'SelectionMode', 'single', 'ListString', list);
-ErrorMode
+% ErrorMode = 2
+probInput = inputdlg('Choose the probability:', 'Enter the value for probability', [1 50]);
+probInput = str2double(probInput);
+% probInput = 500
+
 if (ErrorMode == 1)
     fprintf('Ones compliment chosen');
     for i = 1:length(encodedValues)
         sizeOfValue = length(encodedValues{i});
         probability = randi([1 1000]);
-        if (probability > 400)
+        if (probability > probInput)
             if (sizeOfValue == 1)
                 
                 temp = encodedValues{i};
@@ -281,7 +285,7 @@ elseif (ErrorMode == 2)
         sizeOfValue = length(encodedValues{i});
         probability = randi([1 1000]);
         
-        if (probability > 0)
+        if (probability > probInput)
             if (sizeOfValue == 1)
                 temp = encodedValues{i};
                 temp = decimalToBinaryVector(temp, 8, 'MSBFirst');
