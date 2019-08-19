@@ -18,6 +18,7 @@ uploadedImage = imread(fileName);
 
 % Display the uploaded image. The axis do not show, so we set the
 % visibility to be on in order to see the pixels
+figure('units','normalized','outerposition',[0 0 1 1])
 subplot(2,3,1)
 imshow(uploadedImage);
 title(strcat('Original image: ', fileName));
@@ -237,20 +238,28 @@ for i = 1:totalNumberOfBlocks
         encoderCounter = encoderCounter + 1;
         
     end
-    
-    
+        
 end
 
 
 %% Step 6: Introducing Errors
+% The error introduction is done in a completely random way. There are two
+% options, which are both done on a bit level. The probability is based on
+% a "coin flip" where should a random value should be chosen, that specific
+% pixel will be affected.
 
 list = {'Ones Compliment', 'Individual Bit Flip'};
 [ErrorMode, rf] = listdlg('PromptString', 'Select a method', 'SelectionMode', 'single', 'ListString', list);
 % ErrorMode = 2
-probInput = inputdlg('Choose the probability:', 'Enter the value for probability', [1 50]);
+probInput = inputdlg('Choose the probability:', 'Enter the value for probability', [1 70]);
 probInput = str2double(probInput);
-% probInput = 500
+probInput = 1000 - probInput;
+% probInput = 1001
 
+% The first error mode does a 1s compliment of the chosen pixel.
+% Essentially it takes the pixel value, converts to binary and using the ~
+% on MATLAB automatically inverst the values. It is then converted back to
+% a decimal number.
 if (ErrorMode == 1)
     fprintf('Ones compliment chosen');
     for i = 1:length(encodedValues)
@@ -277,6 +286,9 @@ if (ErrorMode == 1)
         end
         
     end
+    
+% The second error mode is dependent on the random number generated between
+% 1 and 8. this determines which bit will be flipped.
 elseif (ErrorMode == 2)
     fprintf('Bit flip chosen');
     randomBit = randi([1 8]);
@@ -365,6 +377,14 @@ end
 
 
 %% Step 8: Filling in the holes
+% Filling the holes is based around the algorithm used to create the holes
+% as well as research done on various techniques when holes were used. the
+% idea is to fill the hole using surrounding blocks to get an image as
+% accurate as possible. So when filling a specific pixel using the pixels
+% directly above, directly left, and directly above-left of the hole
+% pixel. It calculates the average of the 3 values and moves to the next
+% pixel. Since the image does not transmit a specifc marker for the holes,
+% it searches for the holes the same way it creates the holes.
 
 filledImage = cell(1, totalNumberOfBlocks);
 for i = 1:totalNumberOfBlocks
