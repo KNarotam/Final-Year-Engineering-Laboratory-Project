@@ -1,4 +1,4 @@
-%% Image Compression based on Non-Parametric Sampling in Noisy Environments (Compression using Holes)
+%% Image Compression based on Non-Parametric Sampling in Noisy Environments (Compression using Holes and DCT)
 % Authors: 19G01: Kishan Narotam (717 931) & Nitesh Nana (720 064)
 
 %% Clear workspace and command window
@@ -18,7 +18,8 @@ uploadedImage = imread(fileName);
 
 % Display the uploaded image. The axis do not show, so we set the
 % visibility to be on in order to see the pixels
-subplot(2,3,1)
+figure('units','normalized','outerposition',[0 0 1 1])
+subplot(1,3,1)
 imshow(uploadedImage);
 title(strcat('Original image: ', fileName));
 axis = gca;
@@ -34,13 +35,12 @@ grayImage = rgb2gray(uploadedImage);
 
 % Display the uploaded image into grayscale. Again, the axis does not show,
 % so we set the visibility to be on.
-subplot(2,3,2)
+subplot(1,3,2)
 imshow(grayImage);
 title(strcat('Grayscale image: ', fileName));
 axis = gca;
 axis.Visible = 'On';
-imwrite(grayImage, 'OriginalImage.tif')
-imwrite(grayImage, 'OriginalImage.bmp')
+imwrite(grayImage, 'OriginalImage.gif')
 
 %% Step 3: Divide the image into the domain pool
 % First we need to know the height and the width of the image. From this
@@ -166,13 +166,102 @@ end
 
 % The axis do not show, so we set the visibility to be on in order to see
 % the pixels.
-subplot(2,3,3)
+subplot(1,3,3)
 imshow(holesImage)
 title(strcat('Grayscale image with holes: ', fileName));
 axis = gca;
 axis.Visible = 'On';
 
-%% Step 5: Encoding the image using Run-Length Ecoding
+%% Step 5: Compressing the image using a known technique
+% Using known techniques, we perform the compression of the chosen image.
+% First we start by performing th dct on the image itself so that we can
+% see where the majority of the intensity is.
+
+intensityImage = dct2(holesImage);
+figure('units','normalized','outerposition',[0 0 1 1])
+subplot(2,2,1)
+imshow(intensityImage);
+title(strcat('Image showing the intensity (amplitude) of the image for: ', fileName));
+axis = gca;
+axis.Visible = 'On';
+
+% We create an input dialog box so we can get the compression depth for the
+% image. The number will be between 1 and 8, and will determine how much
+% compression will take place.
+
+compressionDepth = '8';
+testString = strcat(' Compression depth = ', compressionDepth);
+compressionDepth = str2double(compressionDepth);
+
+% Now to perform the actual dct compression on 8x8 blocks, we can create
+% empty domain pools. This will be for the quantized image and idct and
+% final compressed image.
+
+quantizedBlocks = cell(1, totalNumberOfBlocks);
+idctBlocks = cell(1, totalNumberOfBlocks);
+compressedBlocks = cell(1, totalNumberOfBlocks);
+
+
+for i = 1:totalNumberOfBlocks
+    f = blocks{i};
+    dctTemp = dct2(f);
+    quantizedBlocks{i} = dctTemp;
+    idctTemp = idct2(dctTemp);
+    blocks{i} = idctTemp;
+    
+    dctTemp(8:-1:compressionDepth+1, :) = 0;
+    dctTemp(:, 8:-1:compressionDepth+1) = 0;
+    idctBlocks{i} = dctTemp;
+    idctTemp = idct2(dctTemp);
+    compressedBlocks{i} = idctTemp;
+    
+end
+
+
+% We reconstruct the quantized blocks into an image
+bIndex = 1;
+for yIndex = 1:blocksDown
+    for xIndex = 1:blocksAcross
+        quantizedImage((8*yIndex)-7:(yIndex*8), (8*xIndex)-7:(xIndex*8)) = quantizedBlocks{bIndex};
+        bIndex = bIndex+1;
+    end
+end
+
+subplot(2,2,2)
+imshow(quantizedImage)
+title(strcat('Quantized DCT of: ', fileName))
+
+% We reconstruct the compressed Image
+bIndex = 1;
+for yIndex = 1:blocksDown
+    for xIndex = 1:blocksAcross
+        compressedImage((8*yIndex)-7:(yIndex*8), (8*xIndex)-7:(xIndex*8)) = compressedBlocks{bIndex};
+        bIndex = bIndex+1;
+    end
+end
+
+subplot(2,2,3)
+imshow(holesImage)
+title(strcat('Image before compression: ', fileName))
+axis = gca;
+axis.Visible = 'On';
+% imwrite(holesImage, 'abc.png');
+
+compressedImage255 = compressedImage/255;
+
+
+subplot(2,2,4)
+imshow(compressedImage255)
+title(strcat('Image after compression: ', fileName, testString))
+axis = gca;
+axis.Visible = 'On';
+% imwrite(compressedImage255, 'abc2.png');
+
+%% Step 6: Encoding the image using Run-Length Ecoding
+
+for i = 1:totalNumberOfBlocks
+   compressedBlocks{i} = uint8(compressedBlocks{i}); 
+end
 
 % The algorithm for run-length encoding was modified and adapted from an
 % implmentation that was found on the MathWorks File Exchange database. The
@@ -215,7 +304,7 @@ encoderCounter = 1;
 
 for i = 1:totalNumberOfBlocks
     
-    encodingBlock = double(blocks{i});
+    encodingBlock = double(compressedBlocks{i});
     
     for j = 1:8
         
@@ -241,18 +330,31 @@ for i = 1:totalNumberOfBlocks
     
 end
 
+%% Step 7: Introducing Errors
 
-%% Step 6: Introducing Errors
+% The error introduction is done in a completely random way. There are two
+% options, which are both done on a bit level. The probability is based on
+% a "coin flip" where should a random value should be chosen, that specific
+% pixel will be affected.
 
 list = {'Ones Compliment', 'Individual Bit Flip'};
 [ErrorMode, rf] = listdlg('PromptString', 'Select a method', 'SelectionMode', 'single', 'ListString', list);
-ErrorMode
+% ErrorMode = 2
+probInput = inputdlg('Choose the probability:', 'Enter the value for probability', [1 70]);
+probInput = str2double(probInput);
+probInput = 1000 - probInput;
+% probInput = 1001
+
+% The first error mode does a 1s compliment of the chosen pixel.
+% Essentially it takes the pixel value, converts to binary and using the ~
+% on MATLAB automatically inverst the values. It is then converted back to
+% a decimal number.
 if (ErrorMode == 1)
     fprintf('Ones compliment chosen');
     for i = 1:length(encodedValues)
         sizeOfValue = length(encodedValues{i});
         probability = randi([1 1000]);
-        if (probability > 400)
+        if (probability > probInput)
             if (sizeOfValue == 1)
                 
                 temp = encodedValues{i};
@@ -273,6 +375,9 @@ if (ErrorMode == 1)
         end
         
     end
+    
+% The second error mode is dependent on the random number generated between
+% 1 and 8. this determines which bit will be flipped.
 elseif (ErrorMode == 2)
     fprintf('Bit flip chosen');
     randomBit = randi([1 8]);
@@ -281,7 +386,7 @@ elseif (ErrorMode == 2)
         sizeOfValue = length(encodedValues{i});
         probability = randi([1 1000]);
         
-        if (probability > 0)
+        if (probability > probInput)
             if (sizeOfValue == 1)
                 temp = encodedValues{i};
                 temp = decimalToBinaryVector(temp, 8, 'MSBFirst');
@@ -306,7 +411,8 @@ elseif (ErrorMode == 2)
     
 end
 
-%% Step 7: Decoding the Image using Run-Length Decoding
+
+%% Step 8: Decoding the Image using Run-Length Decoding
 
 % The algorithm for run-length decoding was modified and adapted from an
 % implmentation that was found on the MathWorks File Exchange database. The
@@ -360,7 +466,15 @@ for i = 1:totalNumberOfBlocks
 end
 
 
-%% Step 8: Filling in the holes
+%% Step 9: Filling in the holes
+% Filling the holes is based around the algorithm used to create the holes
+% as well as research done on various techniques when holes were used. the
+% idea is to fill the hole using surrounding blocks to get an image as
+% accurate as possible. So when filling a specific pixel using the pixels
+% directly above, directly left, and directly above-left of the hole
+% pixel. It calculates the average of the 3 values and moves to the next
+% pixel. Since the image does not transmit a specifc marker for the holes,
+% it searches for the holes the same way it creates the holes.
 
 filledImage = cell(1, totalNumberOfBlocks);
 for i = 1:totalNumberOfBlocks
@@ -455,12 +569,11 @@ end
 
 reconstructedImage255 = reconstructedImage/255;
 
-subplot(2,3,5)
+figure('units','normalized','outerposition',[0 0 1 1])
 imshow(reconstructedImage255)
 title(strcat('Reconstructed Image: ', fileName))
 axis = gca;
 axis.Visible = 'On';
-imwrite(reconstructedImage255, 'CompressedImage.tif');
-imwrite(reconstructedImage255, 'CompressedImage.jpeg');
+imwrite(reconstructedImage, 'CompressedImage.gif');
 
 toc
