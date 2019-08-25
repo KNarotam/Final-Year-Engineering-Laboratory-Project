@@ -31,7 +31,8 @@ tic
 % dimension is the colour map. So converting the image to grayscale will
 % make the uploaded image into a 2 dimensional array.
 
-grayImage = rgb2gray(uploadedImage);
+%grayImage = rgb2gray(uploadedImage);
+grayImage = uploadedImage;
 
 % Display the uploaded image into grayscale. Again, the axis does not show,
 % so we set the visibility to be on.
@@ -248,14 +249,14 @@ end
 % a "coin flip" where should a random value should be chosen, that specific
 % pixel will be affected.
 
-%list = {'Ones Compliment', 'Individual Bit Flip'};
-%[ErrorMode, rf] = listdlg('PromptString', 'Select a method', 'SelectionMode', 'single', 'ListString', list);
-ErrorMode = 2;
+% list = {'Ones Compliment', 'Individual Bit Flip'};
+% [ErrorMode, rf] = listdlg('PromptString', 'Select a method', 'SelectionMode', 'single', 'ListString', list);
+ErrorMode = 1;
 % probInput = inputdlg('Choose the probability:', 'Enter the value for probability', [1 70]);
 % probInput = str2double(probInput);
 % probInput = (probInput/100) * 1000;
 % probInput = 1000 - probInput
-probInput = 900
+probInput = 00
 
 % The first error mode does a 1s compliment of the chosen pixel.
 % Essentially it takes the pixel value, converts to binary and using the ~
@@ -264,13 +265,13 @@ probInput = 900
 if (ErrorMode == 1)
     fprintf('Ones compliment chosen');
     for i = 1:length(encodedValues)
-        sizeOfValue = length(encodedValues{i});sn
+        sizeOfValue = length(encodedValues{i});
         probability = randi([1 1000]);
         if (probability > probInput)
             if (sizeOfValue == 1)
                 
                 temp = encodedValues{i};
-                temp = decimalToBinaryVector(temp, 8, 'MSB6First');
+                temp = decimalToBinaryVector(temp);
                 invertedTemp = ~temp;
                 invertedTemp = double(invertedTemp);
                 encodedValues{i} = binaryVectorToDecimal(invertedTemp, 'MSBFirst');
@@ -278,7 +279,7 @@ if (ErrorMode == 1)
             else
                 position = randi([1 length(encodedValues{i})]);
                 temp = encodedValues{i}(position);
-                temp = decimalToBinaryVector(temp, 8, 'MSBFirst');
+                temp = decimalToBinaryVector(temp);
                 invertedTemp = ~temp;
                 invertedTemp = double(invertedTemp);
                 encodedValues{i}(position) = binaryVectorToDecimal(invertedTemp, 'MSBFirst');
@@ -491,4 +492,5 @@ axis.Visible = 'On';
 
 toc
 
+close all
 CompressionRatio
