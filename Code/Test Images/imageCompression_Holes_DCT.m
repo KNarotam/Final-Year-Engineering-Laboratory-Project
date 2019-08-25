@@ -578,3 +578,5 @@ axis.Visible = 'On';
 imwrite(reconstructedImage, 'CompressedImage.gif');
 
 toc
+
+compressionRatio

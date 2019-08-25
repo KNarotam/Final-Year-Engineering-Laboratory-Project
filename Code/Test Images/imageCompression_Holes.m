@@ -255,7 +255,7 @@ ErrorMode = 2;
 % probInput = str2double(probInput);
 % probInput = (probInput/100) * 1000;
 % probInput = 1000 - probInput
-probInput = 900
+probInput = 1001
 
 % The first error mode does a 1s compliment of the chosen pixel.
 % Essentially it takes the pixel value, converts to binary and using the ~
