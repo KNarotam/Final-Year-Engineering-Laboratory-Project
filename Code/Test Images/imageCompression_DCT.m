@@ -369,67 +369,21 @@ for i = 1:totalNumberOfBlocks
     
 end
 
-<<<<<<< HEAD
-filledImage = cell(1, totalNumberOfBlocks);
-for i = 1:totalNumberOfBlocks
-    filledImage{i} = double(decodedImage{i});
-=======
 recon = cell(1, totalNumberOfBlocks);
 for i = 1:totalNumberOfBlocks
     recon{i} = double(decodedImage{i});
->>>>>>> af71caacee7db45af4cd2ba9cf99b1aae3d756e0
 end
 
 bIndex = 1;
 for yIndex = 1:blocksDown
     for xIndex = 1:blocksAcross
-<<<<<<< HEAD
-        reconstructedImage((8*yIndex)-7:(yIndex*8), (8*xIndex)-7:(xIndex*8)) = filledImage{bIndex};
-=======
         reconstructedImage((8*yIndex)-7:(yIndex*8), (8*xIndex)-7:(xIndex*8)) = recon{bIndex};
->>>>>>> af71caacee7db45af4cd2ba9cf99b1aae3d756e0
         bIndex = bIndex+1;
     end
 end
 
 reconstructedImage255 = reconstructedImage/255;
 
-<<<<<<< HEAD
-gm = double(grayImage);
-A = imnoise(gm,'salt & pepper', 0.01);
-
-peaksnr = psnr(A,reconstructedImage255)
-
-mse = immse(A,reconstructedImage255)
-
-totalBitsOfEncoding = 0;
-binaryValuesCounter = 0;
-binaryCountCounter = 0;
-
-for i = 1:length(encodedValues)    
-    for j = 1:length(encodedValues{i})
-        tempBinary = dec2bin(encodedValues{i}(j));
-        binary = length(tempBinary);
-        binaryValuesCounter = binaryValuesCounter + binary;        
-    end    
-    for k = 1:length(encodedCount{i})
-        temp2Binary = dec2bin(encodedCount{i}(k));
-        binary2 = length(temp2Binary);
-        binaryCountCounter = binaryCountCounter + binary2;
-    end
-end
-
-fprintf('Total number of bits Values: %d', binaryValuesCounter);
-
-fprintf('\nTotal number of bits Count: %d', binaryCountCounter);
-
-totalBitsOfOriginal = heightOfImage * widthOfImage * 8;
-fprintf('\nOriginal image number of bits: %d', totalBitsOfOriginal);
-
-totalBitsOfEncoding = binaryValuesCounter+binaryCountCounter;
-
-totalBitsOfOriginal/totalBitsOfEncoding
-=======
 figure('units','normalized','outerposition',[0 0 1 1])
 imshow(reconstructedImage255)
 title(strcat('Reconstructed Image: ', fileName))
@@ -440,4 +394,3 @@ imwrite(reconstructedImage, 'CompressedImage.gif');
 toc
 close all
 CompressionRatio
->>>>>>> af71caacee7db45af4cd2ba9cf99b1aae3d756e0
