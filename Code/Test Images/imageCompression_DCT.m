@@ -19,7 +19,7 @@ uploadedImage = imread(fileName);
 % Display the uploaded image. The axis do not show, so we set the
 % visibility to be on in order to see the pixels
 figure('units','normalized','outerposition',[0 0 1 1])
-subplot(1,3,1)
+subplot(1,2,1)
 imshow(uploadedImage);
 title(strcat('Original image: ', fileName));
 axis = gca;
@@ -31,11 +31,12 @@ tic
 % dimension is the colour map. So converting the image to grayscale will
 % make the uploaded image into a 2 dimensional array.
 
-grayImage = rgb2gray(uploadedImage);
+%grayImage = rgb2gray(uploadedImage);
+grayImage = uploadedImage;
 
 % Display the uploaded image into grayscale. Again, the axis does not show,
 % so we set the visibility to be on.
-subplot(1,3,2)
+subplot(1,2,2)
 imshow(grayImage);
 title(strcat('Grayscale image: ', fileName));
 axis = gca;
@@ -75,7 +76,7 @@ for yIndex = 1:blocksDown
     end
 end
 
-%% Step 5: Compressing the image using a known technique
+%% Step 4: Compressing the image using a known technique
 % Using known techniques, we perform the compression of the chosen image.
 % First we start by performing th dct on the image itself so that we can
 % see where the majority of the intensity is.
@@ -92,7 +93,8 @@ axis.Visible = 'On';
 % image. The number will be between 1 and 8, and will determine how much
 % compression will take place.
 
-compressionDepth = inputdlg('Choose the compression depth value (1-8):', 'Enter the value for compression depth', [1 70]);
+% compressionDepth = inputdlg('Choose the compression depth value (1-8):', 'Enter the value for compression depth', [1 70]);
+compressionDepth = '7';
 testString = strcat(' Compression depth = ', compressionDepth);
 compressionDepth = str2double(compressionDepth);
 
@@ -160,7 +162,7 @@ axis = gca;
 axis.Visible = 'On';
 % imwrite(compressedImage255, 'abc2.png');
 
-%% Step 6: Encoding the image using Run-Length Ecoding
+%% Step 5: Encoding the image using Run-Length Ecoding
 
 for i = 1:totalNumberOfBlocks
    compressedBlocks{i} = uint8(compressedBlocks{i}); 
@@ -233,7 +235,88 @@ for i = 1:totalNumberOfBlocks
     
 end
 
-%% Step 8: Decoding the Image using Run-Length Decoding
+%% Step 6: Introducing Errors
+% The error introduction is done in a completely random way. There are two
+% options, which are both done on a bit level. The probability is based on
+% a "coin flip" where should a random value should be chosen, that specific
+% pixel will be affected.
+
+% list = {'Ones Compliment', 'Individual Bit Flip'};
+% [ErrorMode, rf] = listdlg('PromptString', 'Select a method', 'SelectionMode', 'single', 'ListString', list);
+ErrorMode = 2;
+% probInput = inputdlg('Choose the probability:', 'Enter the value for probability', [1 70]);
+% probInput = str2double(probInput);
+% probInput = (probInput/100) * 1000;
+% probInput = 1000 - probInput
+probInput = 00
+
+% The first error mode does a 1s compliment of the chosen pixel.
+% Essentially it takes the pixel value, converts to binary and using the ~
+% on MATLAB automatically inverst the values. It is then converted back to
+% a decimal number.
+if (ErrorMode == 1)
+    fprintf('Ones compliment chosen');
+    for i = 1:length(encodedValues)
+        sizeOfValue = length(encodedValues{i});
+        probability = randi([1 1000]);
+        if (probability > probInput)
+            if (sizeOfValue == 1)
+                
+                temp = encodedValues{i};
+                temp = decimalToBinaryVector(temp);
+                invertedTemp = ~temp;
+                invertedTemp = double(invertedTemp);
+                encodedValues{i} = binaryVectorToDecimal(invertedTemp, 'MSBFirst');
+                
+            else
+                position = randi([1 length(encodedValues{i})]);
+                temp = encodedValues{i}(position);
+                temp = decimalToBinaryVector(temp);
+                invertedTemp = ~temp;
+                invertedTemp = double(invertedTemp);
+                encodedValues{i}(position) = binaryVectorToDecimal(invertedTemp, 'MSBFirst');
+                
+            end
+        end
+        
+    end
+    
+% The second error mode is dependent on the random number generated between
+% 1 and 8. this determines which bit will be flipped.
+elseif (ErrorMode == 2)
+    fprintf('Bit flip chosen');
+    
+    for i = 1:length(encodedValues)
+        sizeOfValue = length(encodedValues{i});
+        probability = randi([1 1000]);
+        
+        if (probability > probInput)
+            if (sizeOfValue == 1)
+                temp = encodedValues{i};
+                temp = decimalToBinaryVector(temp);
+                invertedTemp = temp;
+                randomBit = randi([1 length(temp)]);
+                invertedTemp(randomBit) = ~invertedTemp(randomBit);
+                invertedTemp = double(invertedTemp);
+                encodedValues{i} = binaryVectorToDecimal(invertedTemp, 'MSBFirst');
+                
+            else
+                position = randi([1 length(encodedValues{i})]);
+                temp = encodedValues{i}(position);
+                temp = decimalToBinaryVector(temp);
+                invertedTemp = temp;
+                randomBit = randi([1 length(temp)]);
+                invertedTemp(randomBit) = ~invertedTemp(randomBit);
+                invertedTemp = double(invertedTemp);
+                encodedValues{i}(position) = binaryVectorToDecimal(invertedTemp, 'MSBFirst');
+                
+            end
+        end
+        
+    end
+    
+end
+%% Step 7: Decoding the Image using Run-Length Decoding
 
 % The algorithm for run-length decoding was modified and adapted from an
 % implmentation that was found on the MathWorks File Exchange database. The
@@ -286,21 +369,32 @@ for i = 1:totalNumberOfBlocks
     
 end
 
+<<<<<<< HEAD
 filledImage = cell(1, totalNumberOfBlocks);
 for i = 1:totalNumberOfBlocks
     filledImage{i} = double(decodedImage{i});
+=======
+recon = cell(1, totalNumberOfBlocks);
+for i = 1:totalNumberOfBlocks
+    recon{i} = double(decodedImage{i});
+>>>>>>> af71caacee7db45af4cd2ba9cf99b1aae3d756e0
 end
 
 bIndex = 1;
 for yIndex = 1:blocksDown
     for xIndex = 1:blocksAcross
+<<<<<<< HEAD
         reconstructedImage((8*yIndex)-7:(yIndex*8), (8*xIndex)-7:(xIndex*8)) = filledImage{bIndex};
+=======
+        reconstructedImage((8*yIndex)-7:(yIndex*8), (8*xIndex)-7:(xIndex*8)) = recon{bIndex};
+>>>>>>> af71caacee7db45af4cd2ba9cf99b1aae3d756e0
         bIndex = bIndex+1;
     end
 end
 
 reconstructedImage255 = reconstructedImage/255;
 
+<<<<<<< HEAD
 gm = double(grayImage);
 A = imnoise(gm,'salt & pepper', 0.01);
 
@@ -335,3 +429,15 @@ fprintf('\nOriginal image number of bits: %d', totalBitsOfOriginal);
 totalBitsOfEncoding = binaryValuesCounter+binaryCountCounter;
 
 totalBitsOfOriginal/totalBitsOfEncoding
+=======
+figure('units','normalized','outerposition',[0 0 1 1])
+imshow(reconstructedImage255)
+title(strcat('Reconstructed Image: ', fileName))
+axis = gca;
+axis.Visible = 'On';
+imwrite(reconstructedImage, 'CompressedImage.gif');
+
+toc
+close all
+CompressionRatio
+>>>>>>> af71caacee7db45af4cd2ba9cf99b1aae3d756e0
