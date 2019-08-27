@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6630 64-bit) (preloaded format=pdflatex 2018.3.17)  26 AUG 2019 20:55
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6630 64-bit) (preloaded format=pdflatex 2018.3.17)  27 AUG 2019 11:42
 entering extended mode
 **./Poster.tex
 (Poster.tex
@@ -1380,7 +1380,7 @@ Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 501.
 Here is how much of TeX's memory you used:
  25589 strings out of 493305
  524208 string characters out of 3129802
- 764492 words of memory out of 3000000
+ 765503 words of memory out of 3000000
  28562 multiletter control sequences out of 15000+200000
  36077 words of font info for 72 fonts, out of 3000000 for 9000
  1144 hyphenation exceptions out of 8191
