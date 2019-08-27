@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6630 64-bit) (preloaded format=pdflatex 2018.3.17)  26 AUG 2019 01:40
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6630 64-bit) (preloaded format=pdflatex 2018.3.17)  26 AUG 2019 20:55
 entering extended mode
 **./Poster.tex
 (Poster.tex
@@ -499,8 +499,8 @@ File: tikzlibrarycalc.code.tex 2019/05/09 v3.1.3 (3.1.3)
 
 Paperwidth=2392.87677pt
 Paperheight=3383.03267pt
-BasePaperwidth=957.1361pt
-BasePaperheight=1353.19241pt
+BasePaperwidth=1196.43839pt
+BasePaperheight=1691.51633pt
 
 ("C:\Users\knaro\AppData\Local\Programs\MiKTeX 2.9\tex\latex\geometry\geometry.
 sty"
@@ -1022,7 +1022,11 @@ File: tikzlibraryarrows.code.tex 2019/05/09 v3.1.3 (3.1.3)
 flibraryarrows.code.tex"
 File: pgflibraryarrows.code.tex 2019/05/09 v3.1.3 (3.1.3)
 \arrowsize=\dimen275
-)) (Poster.aux)
+)) (Poster.aux
+
+LaTeX Warning: Label `alg: Creating Holes' multiply defined.
+
+)
 \openout1 = `Poster.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 61.
@@ -1040,8 +1044,7 @@ LaTeX Font Info:    ... okay on input line 61.
 LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 61.
 LaTeX Font Info:    ... okay on input line 61.
 LaTeX Font Info:    Try loading font information for T1+ppl on input line 61.
-
-("C:\Users\knaro\AppData\Local\Programs\MiKTeX 2.9\tex\latex\psnfss\t1ppl.fd"
+ ("C:\Users\knaro\AppData\Local\Programs\MiKTeX 2.9\tex\latex\psnfss\t1ppl.fd"
 File: t1ppl.fd 2001/06/04 font definitions for T1/ppl.
 )
 ("C:\Users\knaro\AppData\Local\Programs\MiKTeX 2.9\tex\context\base\supp-pdf.mk
@@ -1082,15 +1085,15 @@ G,.JBIG2,.JB2,.eps]
 * layout: <same size as paper>
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
 * modes: landscape 
-* h-part:(L,W,R)=(17.07138pt, 1319.04965pt, 17.07138pt)
-* v-part:(T,H,B)=(17.07138pt, 922.99333pt, 17.07138pt)
-* \paperwidth=1353.19241pt
-* \paperheight=957.1361pt
-* \textwidth=1319.04965pt
-* \textheight=922.99333pt
-* \oddsidemargin=-55.19861pt
-* \evensidemargin=-55.19861pt
-* \topmargin=-92.19861pt
+* h-part:(L,W,R)=(21.33955pt, 1648.83722pt, 21.33955pt)
+* v-part:(T,H,B)=(21.33955pt, 1153.75928pt, 21.33955pt)
+* \paperwidth=1691.51633pt
+* \paperheight=1196.43839pt
+* \textwidth=1648.83722pt
+* \textheight=1153.75928pt
+* \oddsidemargin=-50.93044pt
+* \evensidemargin=-50.93044pt
+* \topmargin=-87.93044pt
 * \headheight=12.0pt
 * \headsep=25.0pt
 * \topskip=10.0pt
@@ -1166,11 +1169,11 @@ LaTeX Font Info:    Font shape `T1/ppl/bx/n' in size <14.4> not available
 LaTeX Font Info:    Font shape `T1/ppl/bx/sc' in size <14.4> not available
 (Font)              Font shape `T1/ppl/b/sc' tried instead on input line 112.
 Missing character: There is no ; in font nullfont!
-<figures/BlockDiagram.jpg, id=36, 1552.94464pt x 752.8125pt>
+<figures/BlockDiagram.jpg, id=36, 1545.20143pt x 746.79pt>
 File: figures/BlockDiagram.jpg Graphic file (type jpg)
 <use figures/BlockDiagram.jpg>
 Package pdftex.def Info: figures/BlockDiagram.jpg  used on input line 126.
-(pdftex.def)             Requested size: 425.00992pt x 206.01897pt.
+(pdftex.def)             Requested size: 534.93744pt x 258.53163pt.
 
 Package caption Warning: The option `hypcap=true' will be ignored for this
 (caption)                particular \caption on input line 126.
@@ -1182,74 +1185,159 @@ Missing character: There is no ; in font nullfont!
 Missing character: There is no ; in font nullfont!
 Missing character: There is no ; in font nullfont!
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 177.
-LaTeX Font Info:    Try loading font information for T1+pcr on input line 177.
+put line 195.
+LaTeX Font Info:    Try loading font information for T1+pcr on input line 195.
 ("C:\Users\knaro\AppData\Local\Programs\MiKTeX 2.9\tex\latex\psnfss\t1pcr.fd"
 File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
 )
 Missing character: There is no ; in font nullfont!
 Missing character: There is no ; in font nullfont!
 Missing character: There is no ; in font nullfont!
+<figures/1Land.jpg, id=37, 1852.67157pt x 1242.89343pt>
+File: figures/1Land.jpg Graphic file (type jpg)
+<use figures/1Land.jpg>
+Package pdftex.def Info: figures/1Land.jpg  used on input line 242.
+(pdftex.def)             Requested size: 157.48914pt x 105.65402pt.
+<figures/2Land.jpg, id=38, 1851.91875pt x 1242.14063pt>
+File: figures/2Land.jpg Graphic file (type jpg)
+<use figures/2Land.jpg>
+Package pdftex.def Info: figures/2Land.jpg  used on input line 242.
+(pdftex.def)             Requested size: 157.42514pt x 105.59003pt.
+<figures/3Land.jpg, id=39, 1856.43562pt x 1241.38782pt>
+File: figures/3Land.jpg Graphic file (type jpg)
+<use figures/3Land.jpg>
+Package pdftex.def Info: figures/3Land.jpg  used on input line 242.
+(pdftex.def)             Requested size: 157.8091pt x 105.52603pt.
+<figures/7Land.jpg, id=40, 1857.18843pt x 1244.39906pt>
+File: figures/7Land.jpg Graphic file (type jpg)
+<use figures/7Land.jpg>
+Package pdftex.def Info: figures/7Land.jpg  used on input line 242.
+(pdftex.def)             Requested size: 157.8731pt x 105.78201pt.
+<figures/8Land.jpg, id=41, 1857.18843pt x 1242.89343pt>
+File: figures/8Land.jpg Graphic file (type jpg)
+<use figures/8Land.jpg>
+Package pdftex.def Info: figures/8Land.jpg  used on input line 242.
+(pdftex.def)             Requested size: 157.8731pt x 105.65402pt.
+<figures/9Land.jpg, id=42, 1852.67157pt x 1242.89343pt>
+File: figures/9Land.jpg Graphic file (type jpg)
+<use figures/9Land.jpg>
+Package pdftex.def Info: figures/9Land.jpg  used on input line 242.
+(pdftex.def)             Requested size: 157.48914pt x 105.65402pt.
 Missing character: There is no ; in font nullfont!
 Missing character: There is no ; in font nullfont!
 Missing character: There is no ; in font nullfont!
-<figures/PatternGraph.jpg, id=38, 2317.15688pt x 1291.07344pt>
+<figures/PatternGraph.jpg, id=44, 2350.28062pt x 1315.16344pt>
 File: figures/PatternGraph.jpg Graphic file (type jpg)
 <use figures/PatternGraph.jpg>
-Package pdftex.def Info: figures/PatternGraph.jpg  used on input line 275.
-(pdftex.def)             Requested size: 127.42635pt x 70.9994pt.
-<figures/LandscapeGraph.jpg, id=39, 2321.67375pt x 1287.30937pt>
+Package pdftex.def Info: figures/PatternGraph.jpg  used on input line 324.
+(pdftex.def)             Requested size: 164.53645pt x 92.07085pt.
+
+Overfull \hbox (4.0536pt too wide) in paragraph at lines 324--324
+[][] 
+ []
+
+<figures/LandscapeGraph.jpg, id=45, 2341.9997pt x 1318.17468pt>
 File: figures/LandscapeGraph.jpg Graphic file (type jpg)
 <use figures/LandscapeGraph.jpg>
-Package pdftex.def Info: figures/LandscapeGraph.jpg  used on input line 275.
-(pdftex.def)             Requested size: 127.67473pt x 70.7924pt.
-<figures/HighContrastGraph.jpg, id=40, 2315.65125pt x 1296.34312pt>
+Package pdftex.def Info: figures/LandscapeGraph.jpg  used on input line 324.
+(pdftex.def)             Requested size: 163.95673pt x 92.28165pt.
+
+Overfull \hbox (3.47388pt too wide) in paragraph at lines 324--324
+[][] 
+ []
+
+<figures/HighContrastGraph.jpg, id=46, 2344.25812pt x 1320.43312pt>
 File: figures/HighContrastGraph.jpg Graphic file (type jpg)
 <use figures/HighContrastGraph.jpg>
-Package pdftex.def Info: figures/HighContrastGraph.jpg  used on input line 275.
+Package pdftex.def Info: figures/HighContrastGraph.jpg  used on input line 324.
 
-(pdftex.def)             Requested size: 127.34354pt x 71.2892pt.
-<figures/PSNRPattern.jpg, id=42, 2333.71875pt x 1287.30937pt>
+(pdftex.def)             Requested size: 164.11484pt x 92.43976pt.
+
+Overfull \hbox (3.63199pt too wide) in paragraph at lines 324--324
+[][] 
+ []
+
+<figures/PSNRPattern.jpg, id=48, 2359.31438pt x 1321.18594pt>
 File: figures/PSNRPattern.jpg Graphic file (type jpg)
 <use figures/PSNRPattern.jpg>
-Package pdftex.def Info: figures/PSNRPattern.jpg  used on input line 275.
-(pdftex.def)             Requested size: 140.01707pt x 77.23523pt.
-<figures/MSEPattern.jpg, id=43, 2334.47156pt x 1285.80376pt>
+Package pdftex.def Info: figures/PSNRPattern.jpg  used on input line 324.
+(pdftex.def)             Requested size: 212.32913pt x 118.9016pt.
+<figures/MSEPattern.jpg, id=49, 2367.5953pt x 1312.905pt>
 File: figures/MSEPattern.jpg Graphic file (type jpg)
 <use figures/MSEPattern.jpg>
-Package pdftex.def Info: figures/MSEPattern.jpg  used on input line 275.
-(pdftex.def)             Requested size: 140.06224pt x 77.1449pt.
-<figures/PSNRLandscape.jpg, id=44, 2326.19063pt x 1290.32062pt>
+Package pdftex.def Info: figures/MSEPattern.jpg  used on input line 324.
+(pdftex.def)             Requested size: 213.07439pt x 118.15634pt.
+<figures/PSNRLandscape.jpg, id=50, 2350.28062pt x 1315.16344pt>
 File: figures/PSNRLandscape.jpg Graphic file (type jpg)
 <use figures/PSNRLandscape.jpg>
-Package pdftex.def Info: figures/PSNRLandscape.jpg  used on input line 275.
-(pdftex.def)             Requested size: 139.56541pt x 77.4159pt.
-<figures/MSELandscape.jpg, id=45, 2338.98843pt x 1294.08469pt>
+Package pdftex.def Info: figures/PSNRLandscape.jpg  used on input line 324.
+(pdftex.def)             Requested size: 211.51613pt x 118.3596pt.
+<figures/MSELandscape.jpg, id=51, 2368.34813pt x 1315.91624pt>
 File: figures/MSELandscape.jpg Graphic file (type jpg)
 <use figures/MSELandscape.jpg>
-Package pdftex.def Info: figures/MSELandscape.jpg  used on input line 275.
-(pdftex.def)             Requested size: 140.33325pt x 77.64172pt.
-<figures/PSNRHigh.jpg, id=46, 2332.96594pt x 1291.07344pt>
+Package pdftex.def Info: figures/MSELandscape.jpg  used on input line 324.
+(pdftex.def)             Requested size: 213.14214pt x 118.42735pt.
+<figures/PSNRHigh.jpg, id=52, 2347.26938pt x 1312.905pt>
 File: figures/PSNRHigh.jpg Graphic file (type jpg)
 <use figures/PSNRHigh.jpg>
-Package pdftex.def Info: figures/PSNRHigh.jpg  used on input line 275.
-(pdftex.def)             Requested size: 139.97191pt x 77.46106pt.
+Package pdftex.def Info: figures/PSNRHigh.jpg  used on input line 324.
+(pdftex.def)             Requested size: 211.24513pt x 118.15634pt.
 File: figures/MSEPattern.jpg Graphic file (type jpg)
 <use figures/MSEPattern.jpg>
-Package pdftex.def Info: figures/MSEPattern.jpg  used on input line 275.
-(pdftex.def)             Requested size: 140.06224pt x 77.1449pt.
+Package pdftex.def Info: figures/MSEPattern.jpg  used on input line 324.
+(pdftex.def)             Requested size: 213.07439pt x 118.15634pt.
 Missing character: There is no ; in font nullfont!
 Missing character: There is no ; in font nullfont!
 Missing character: There is no ; in font nullfont!
+<figures/1Pattern.jpg, id=53, 918.43124pt x 1238.37656pt>
+File: figures/1Pattern.jpg Graphic file (type jpg)
+<use figures/1Pattern.jpg>
+Package pdftex.def Info: figures/1Pattern.jpg  used on input line 385.
+(pdftex.def)             Requested size: 105.62437pt x 142.41975pt.
+<figures/2Pattern.jpg, id=54, 919.18407pt x 1242.14063pt>
+File: figures/2Pattern.jpg Graphic file (type jpg)
+<use figures/2Pattern.jpg>
+Package pdftex.def Info: figures/2Pattern.jpg  used on input line 385.
+(pdftex.def)             Requested size: 105.71095pt x 142.85265pt.
+<figures/3Pattern.jpg, id=55, 914.66719pt x 1239.88219pt>
+File: figures/3Pattern.jpg Graphic file (type jpg)
+<use figures/3Pattern.jpg>
+Package pdftex.def Info: figures/3Pattern.jpg  used on input line 385.
+(pdftex.def)             Requested size: 105.19148pt x 142.59291pt.
+<figures/4Pattern.jpg, id=56, 923.70094pt x 1242.89343pt>
+File: figures/4Pattern.jpg Graphic file (type jpg)
+<use figures/4Pattern.jpg>
+Package pdftex.def Info: figures/4Pattern.jpg  used on input line 385.
+(pdftex.def)             Requested size: 106.23042pt x 142.93922pt.
+<figures/5Pattern.jpg, id=57, 920.68968pt x 1247.41031pt>
+File: figures/5Pattern.jpg Graphic file (type jpg)
+<use figures/5Pattern.jpg>
+Package pdftex.def Info: figures/5Pattern.jpg  used on input line 385.
+(pdftex.def)             Requested size: 105.88411pt x 143.45868pt.
+<figures/7Pattern.jpg, id=58, 925.20656pt x 1242.89343pt>
+File: figures/7Pattern.jpg Graphic file (type jpg)
+<use figures/7Pattern.jpg>
+Package pdftex.def Info: figures/7Pattern.jpg  used on input line 385.
+(pdftex.def)             Requested size: 106.40356pt x 142.93922pt.
+<figures/8Pattern.jpg, id=59, 919.93687pt x 1242.89343pt>
+File: figures/8Pattern.jpg Graphic file (type jpg)
+<use figures/8Pattern.jpg>
+Package pdftex.def Info: figures/8Pattern.jpg  used on input line 385.
+(pdftex.def)             Requested size: 105.79753pt x 142.93922pt.
+<figures/9Pattern.jpg, id=60, 923.70094pt x 1244.39906pt>
+File: figures/9Pattern.jpg Graphic file (type jpg)
+<use figures/9Pattern.jpg>
+Package pdftex.def Info: figures/9Pattern.jpg  used on input line 385.
+(pdftex.def)             Requested size: 106.23042pt x 143.11237pt.
 Missing character: There is no ; in font nullfont!
 Missing character: There is no ; in font nullfont!
 Missing character: There is no ; in font nullfont!
 LaTeX Font Info:    Font shape `T1/ppl/bx/n' in size <12> not available
-(Font)              Font shape `T1/ppl/b/n' tried instead on input line 325.
-<figures/RLE.jpg, id=47, 1469.92018pt x 203.90465pt>
+(Font)              Font shape `T1/ppl/b/n' tried instead on input line 421.
+<figures/RLE.jpg, id=61, 1469.92018pt x 203.90465pt>
 File: figures/RLE.jpg Graphic file (type jpg)
 <use figures/RLE.jpg>
-Package pdftex.def Info: figures/RLE.jpg  used on input line 325.
+Package pdftex.def Info: figures/RLE.jpg  used on input line 421.
 (pdftex.def)             Requested size: 293.97884pt x 40.7802pt.
 Missing character: There is no ; in font nullfont!
 Missing character: There is no ; in font nullfont!
@@ -1266,48 +1354,56 @@ Missing character: There is no ; in font nullfont!
 Missing character: There is no ; in font nullfont!
 Missing character: There is no ; in font nullfont!
 Missing character: There is no ; in font nullfont!
-
 [2
 
 {C:/Users/knaro/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map} <./figures/w
-its.jpg> <./figures/EIE.pdf> <./figures/BlockDiagram.jpg> <./figures/PatternGra
-ph.jpg> <./figures/LandscapeGraph.jpg> <./figures/HighContrastGraph.jpg> <./fig
-ures/PSNRPattern.jpg> <./figures/MSEPattern.jpg> <./figures/PSNRLandscape.jpg> 
-<./figures/MSELandscape.jpg> <./figures/PSNRHigh.jpg> <./figures/RLE.jpg>]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 389.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 389.
+its.jpg> <./figures/EIE.pdf> <./figures/BlockDiagram.jpg> <./figures/1Land.jpg>
+ <./figures/2Land.jpg> <./figures/3Land.jpg> <./figures/7Land.jpg> <./figures/8
+Land.jpg> <./figures/9Land.jpg> <./figures/PatternGraph.jpg> <./figures/Landsca
+peGraph.jpg> <./figures/HighContrastGraph.jpg> <./figures/PSNRPattern.jpg> <./f
+igures/MSEPattern.jpg> <./figures/PSNRLandscape.jpg> <./figures/MSELandscape.jp
+g> <./figures/PSNRHigh.jpg> <./figures/1Pattern.jpg> <./figures/2Pattern.jpg> <
+./figures/3Pattern.jpg> <./figures/4Pattern.jpg> <./figures/5Pattern.jpg> <./fi
+gures/7Pattern.jpg> <./figures/8Pattern.jpg> <./figures/9Pattern.jpg> <./figure
+s/RLE.jpg>]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 501.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 501.
+ (Poster.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 501.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 501.
 
-(Poster.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 389.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 389.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 389.
+
+LaTeX Warning: There were multiply-defined labels.
+
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 501.
  ) 
 Here is how much of TeX's memory you used:
- 25414 strings out of 493305
- 519549 string characters out of 3129802
- 744602 words of memory out of 3000000
- 28418 multiletter control sequences out of 15000+200000
+ 25589 strings out of 493305
+ 524208 string characters out of 3129802
+ 764492 words of memory out of 3000000
+ 28562 multiletter control sequences out of 15000+200000
  36077 words of font info for 72 fonts, out of 3000000 for 9000
  1144 hyphenation exceptions out of 8191
- 62i,24n,92p,432b,1487s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 62i,24n,92p,432b,1489s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Users/knaro/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dvips/base/8r.enc
 }<C:/Users/knaro/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/
 cm/cmex10.pfb><C:/Users/knaro/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/pub
 lic/amsfonts/cm/cmmi10.pfb><C:/Users/knaro/AppData/Local/Programs/MiKTeX 2.9/fo
 nts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/knaro/AppData/Local/Programs/
 MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/knaro/AppData/Loc
-al/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/knaro
-/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/
-Users/knaro/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cm
-sy10.pfb><C:/Users/knaro/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/a
-msfonts/cm/cmsy8.pfb><C:/Users/knaro/AppData/Local/Programs/MiKTeX 2.9/fonts/ty
-pe1/urw/courier/ucrr8a.pfb><C:/Users/knaro/AppData/Local/Programs/MiKTeX 2.9/fo
-nts/type1/urw/palatino/uplb8a.pfb><C:/Users/knaro/AppData/Local/Programs/MiKTeX
- 2.9/fonts/type1/urw/palatino/uplr8a.pfb><C:/Users/knaro/AppData/Local/Programs
-/MiKTeX 2.9/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on Poster.pdf (1 page, 3600213 bytes).
+al/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/knaro
+/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:
+/Users/knaro/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/c
+mr8.pfb><C:/Users/knaro/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/am
+sfonts/cm/cmsy10.pfb><C:/Users/knaro/AppData/Local/Programs/MiKTeX 2.9/fonts/ty
+pe1/public/amsfonts/cm/cmsy8.pfb><C:/Users/knaro/AppData/Local/Programs/MiKTeX 
+2.9/fonts/type1/urw/courier/ucrr8a.pfb><C:/Users/knaro/AppData/Local/Programs/M
+iKTeX 2.9/fonts/type1/urw/palatino/uplb8a.pfb><C:/Users/knaro/AppData/Local/Pro
+grams/MiKTeX 2.9/fonts/type1/urw/palatino/uplr8a.pfb><C:/Users/knaro/AppData/Lo
+cal/Programs/MiKTeX 2.9/fonts/type1/urw/palatino/uplri8a.pfb>
+Output written on Poster.pdf (1 page, 17853913 bytes).
 PDF statistics:
- 172 PDF objects out of 1000 (max. 8388607)
- 46 named destinations out of 1000 (max. 500000)
- 181 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 210 PDF objects out of 1000 (max. 8388607)
+ 63 named destinations out of 1000 (max. 500000)
+ 251 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -18,7 +18,7 @@
 %	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
 %----------------------------------------------------------------------------------------
 
-\documentclass[landscape,a0paper,fontscale=0.4]{baposter} % Adjust the font scale/size here
+\documentclass[landscape,a0paper,fontscale=0.5]{baposter} % Adjust the font scale/size here
 
 \hyphenation{op-tical net-works semi-conduc-tor}
 \usepackage{url}
@@ -100,7 +100,7 @@ columns =3
 %----------------------------------------------------------------------------------------
 
 \headerbox{Objectives}{name=objectives,column=0,row=0}{
-To develop a robust scheme for image compression involving the creation of holes, encoding, transmitting and consequently receiving, decoding and filling these holes. 
+To develop a robust scheme for image compression involving:
 \begin{itemize}\compresslist
 	\vspace{-0.4em}
 	\item Creating holes in an image
@@ -130,38 +130,27 @@ To develop a robust scheme for image compression involving the creation of holes
 %----------------------------------------------------------------------------------------
 
 \headerbox{Algorithms}{name=systemdesign,column=0,below=systemDesign, above=bottom}{ % This block's bottom aligns with the bottom of the conclusion block
-	
+\vspace{-1.5em}	
 \begin{algorithm}[H]
 \caption{High-level algorithm for creating holes in \code{8x8} blocks}
 \label{alg: Creating Holes}
 \begin{algorithmic}
 \FOR{every block in the domain pool}
-	\STATE Go to \code{2x2} square in \code{8x8} block
-	\STATE Calculate average of pixels in \code{2x2}
-	\STATE
-	\FOR{every pixel in the \code{2x2}}
-		\STATE Check Chebyshev distance between pixels and average 
+	\STATE Set n=2
+	\STATE Go to \code{nxn} square in \code{8x8} block
+	\STATE Calculate average of pixels in \code{nxn}
+	\FOR{every pixel in the \code{nxn} block}
+		\STATE Check Chebyshev distance between pixels \code{(y[])} and average value \code{(x)}
 	\ENDFOR
-	\IF{distance between the average and each pixel $<$ 6}
-		\STATE Go to \code{4x4} square in \code{8x8} block
-		\STATE Calculate average of pixels of \code{4x4}
-		\STATE
-		\FOR{every pixel in the \code{4x4}}
-			\STATE Check Chebyshev distance between each pixel
-		\ENDFOR
-		\IF{distance between the average and each pixel $<$ 6}
-			\STATE Go to \code{6x6} square in \code{8x8} block
-			\STATE Calculate average of pixels of \code{6x6}
-			\STATE
-			\FOR{every pixel in the \code{6x6}}
-				\STATE Check Chebyshev distance between each pixel and average value 
-			\ENDFOR
-			\IF{distance between average and each pixel $<$ 6}
+	\IF{Chebyshev distance between \code{x} and each value of \code{y[]} $<$ 6}
+		\STATE Repeat for n=4		
+		\IF{Chebyshev distance between \code{x} and each value of \code{y[]} $<$ 6}
+			\STATE Repeat for n=6				
+			\IF{Chebyshev distance between \code{x} and each value of \code{y[]} $<$ 6}
 				\STATE Create hole in \code{6x6}
 			\ELSE
 				\STATE Create hole in \code{4x4}
 			\ENDIF
-			\STATE
 		\ELSE
 			\STATE Create hole in \code{2x2}
 	\ENDIF
@@ -171,7 +160,36 @@ To develop a robust scheme for image compression involving the creation of holes
 \ENDFOR
 \end{algorithmic}
 \end{algorithm}
-
+\vspace{-1em}
+\begin{algorithm}[H]
+\caption{High-level algorithm for filling holes in \code{8x8} blocks}
+\label{alg: Creating Holes}
+\begin{algorithmic}
+	\STATE Set n=2
+	\STATE Go to \code{nxn} square in \code{8x8} block
+	\STATE Calculate average of pixels in \code{nxn}
+	\FOR{every pixel in the \code{nxn} block}
+		\STATE Check Chebyshev distance between pixels \code{(y[])} and average value \code{(x)}
+	\ENDFOR
+	\IF{Chebyshev distance between \code{x} and each value of \code{y[]} $<$ 6}
+		\STATE Repeat for n=4		
+		\IF{Chebyshev distance between \code{x} and each value of \code{y[]} $<$ 6}
+			\STATE Repeat for n=6				
+			\IF{Chebyshev distance between \code{x} and each value of \code{y[]} $<$ 6}
+				\STATE Move to top left of nxn block
+				\STATE Calculate average of pixels directly:above, left \& above-left. Fill pixel with average value
+				\STATE Proceed from left to right and top to bottom
+			\ELSE
+				\STATE Fill hole in \code{4x4}
+			\ENDIF
+		\ELSE
+			\STATE Fill hole in \code{2x2}
+	\ENDIF
+	\ELSE
+		\STATE Move to next block in domain pool
+	\ENDIF
+\end{algorithmic}
+\end{algorithm}
 
 	
 }
@@ -186,30 +204,62 @@ To develop a robust scheme for image compression involving the creation of holes
 %----------------------------------------------------------------------------------------
 
 \headerbox{Results: Processing}{name=resultsProcessing,column=1,row=0}{
+The figures below and to the right detail the various steps involved in the compression of the image such as: converting to grayscale; creating holes; applying the DCT transformation; and the effect of noise in the final reconstruction.
 
-In the figures below, the various steps and processes that the image goes through can be seen.
-
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{0.3\textwidth} % width of left subfigure
+		\includegraphics[scale=0.085]{1Land.jpg}
+		\caption{Original Image} % subcaption
+	\end{subfigure}
+	\vspace{1em} % here you can insert horizontal or vertical space
+	\begin{subfigure}{0.3\textwidth} % width of right subfigure
+		\includegraphics[scale=0.085]{2Land.jpg}
+		\caption{Grayscale Image} % subcaption
+	\end{subfigure}
+	\begin{subfigure}{0.3\textwidth} % width of right subfigure
+		\includegraphics[scale=0.085]{3Land.jpg}
+		\caption{Image with Holes} % subcaption
+	\end{subfigure}
+\end{figure}
+\vspace{-3em}
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{0.3\textwidth} % width of left subfigure
+		\includegraphics[scale=0.085]{7Land.jpg}
+		\caption{Bit Flip Error (50\%)} % subcaption
+	\end{subfigure}
+	\vspace{1em} % here you can insert horizontal or vertical space
+	\begin{subfigure}{0.3\textwidth} % width of right subfigure
+		\includegraphics[scale=0.085]{8Land.jpg}
+		\caption{No Errors} % subcaption
+	\end{subfigure}
+	\begin{subfigure}{0.3\textwidth} % width of right subfigure
+		\includegraphics[scale=0.085]{9Land.jpg}
+		\caption{1's Comp. Error (50\%)} % subcaption
+	\end{subfigure}
+\end{figure}
 }
 
 %----------------------------------------------------------------------------------------
 %	RESULTS: SIMULATION
 %----------------------------------------------------------------------------------------
-\headerbox{Results: Simulation}{name=resultsSimulation,column=1, below=resultsProcessing}{
+\headerbox{Results: Simulation}{name=resultsSimulation,column=1, above=bottom, below=resultsProcessing}{
 Figure~\ref{fig: CR} and the subsequent sub-figures test the created \emph{Holes} algorithm on different images. Pattern images are chosen for the repetitive colour and smooth features; landscape images are chosen for the texture features and intense detail; high contrast images are chosen for its combination of both repetitive colour, smooth and texture features. 
 \vspace{-1em}
 \begin{figure}[H]
 \centering
 	\begin{subfigure}{0.3\textwidth} % width of left subfigure
-		\includegraphics[scale=0.055]{PatternGraph}
+		\includegraphics[scale=0.07]{PatternGraph}
 		\caption{Pattern Images} % subcaption
 	\end{subfigure}
 	\vspace{1em} % here you can insert horizontal or vertical space
 	\begin{subfigure}{0.3\textwidth} % width of right subfigure
-		\includegraphics[scale=0.055]{LandscapeGraph}
+		\includegraphics[scale=0.07]{LandscapeGraph}
 		\caption{Landscape Images} % subcaption
 	\end{subfigure}
 	\begin{subfigure}{0.3\textwidth} % width of right subfigure
-		\includegraphics[scale=0.055]{HighContrastGraph}
+		\includegraphics[scale=0.07]{HighContrastGraph}
 		\caption{High Contrast Images} % subcaption
 	\end{subfigure}
 	\vspace{-2em}
@@ -222,12 +272,12 @@ An error analysis is carried out on the different image types calculating the pe
 \begin{figure}[H]
 \centering
 	\begin{subfigure}{0.4\textwidth} % width of left subfigure
-		\includegraphics[scale=0.06]{PSNRPattern}
+		\includegraphics[scale=0.09]{PSNRPattern}
 		\caption{PSNR for all Pattern Images} % subcaption
 	\end{subfigure}
 	\vspace{1em} % here you can insert horizontal or vertical space
 	\begin{subfigure}{0.4\textwidth} % width of right subfigure
-		\includegraphics[scale=0.06]{MSEPattern}
+		\includegraphics[scale=0.09]{MSEPattern}
 		\caption{MSE for all Pattern Images} % subcaption
 	\end{subfigure}
 	\vspace{-2em}
@@ -240,12 +290,12 @@ An error analysis is carried out on the different image types calculating the pe
 \begin{figure}[H]
 \centering
 	\begin{subfigure}{0.4\textwidth} % width of left subfigure
-		\includegraphics[scale=0.06]{PSNRLandscape}
+		\includegraphics[scale=0.09]{PSNRLandscape}
 		\caption{PSNR for all Landscape Images} % subcaption
 	\end{subfigure}
 	\vspace{1em} % here you can insert horizontal or vertical space
 	\begin{subfigure}{0.4\textwidth} % width of right subfigure
-		\includegraphics[scale=0.06]{MSELandscape}
+		\includegraphics[scale=0.09]{MSELandscape}
 		\caption{MSE for all Landscape Images} % subcaption
 	\end{subfigure}
 	\vspace{-2em}
@@ -253,17 +303,16 @@ An error analysis is carried out on the different image types calculating the pe
 	\label{fig: Landscape Error} % caption for whole figure
 \end{figure}
 
-
 \vspace{-1em}
 \begin{figure}[H]
 \centering
 	\begin{subfigure}{0.4\textwidth} % width of left subfigure
-		\includegraphics[scale=0.06]{PSNRHigh}
+		\includegraphics[scale=0.09]{PSNRHigh}
 		\caption{PSNR for all High Contrast Images} % subcaption
 	\end{subfigure}
 	\vspace{1em} % here you can insert horizontal or vertical space
 	\begin{subfigure}{0.4\textwidth} % width of right subfigure
-		\includegraphics[scale=0.06]{MSEPattern}
+		\includegraphics[scale=0.09]{MSEPattern}
 		\caption{MSE for all High Contrast Images} % subcaption
 	\end{subfigure}
 	\vspace{-2em}
@@ -274,13 +323,7 @@ An error analysis is carried out on the different image types calculating the pe
 	
 }
 
-%----------------------------------------------------------------------------------------
-%	RESULTS: PROCESSING
-%----------------------------------------------------------------------------------------
 
-\headerbox{Results: Processing}{name=resultsProcessing,column=1, above=bottom, below=resultsSimulation}{
-
-}
 
 %----------------------------------------------------------------------------------------
 %----------------------------------------------------------------------------------------
@@ -288,11 +331,64 @@ An error analysis is carried out on the different image types calculating the pe
 %----------------------------------------------------------------------------------------
 %----------------------------------------------------------------------------------------
 
+
+%----------------------------------------------------------------------------------------
+%	RESULTS: PROCESSING
+%----------------------------------------------------------------------------------------
+
+\headerbox{Results: Processing}{name=resultsProcessing1,column=2,row=0}{
+
+\vspace{-1em}
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{0.2\textwidth} % width of left subfigure
+		\includegraphics[scale=0.115]{1Pattern.jpg}
+		\caption{Original Image} % subcaption
+	\end{subfigure}
+	\vspace{1em} % here you can insert horizontal or vertical space
+	\begin{subfigure}{0.2\textwidth} % width of right subfigure
+		\includegraphics[scale=0.115]{2Pattern.jpg}
+		\caption{Grayscale Image} % subcaption
+	\end{subfigure}
+	\begin{subfigure}{0.2\textwidth} % width of right subfigure
+		\includegraphics[scale=0.115]{3Pattern.jpg}
+		\caption{Image with Holes} % subcaption
+	\end{subfigure}
+	\begin{subfigure}{0.2\textwidth} % width of left subfigure
+		\includegraphics[scale=0.115]{4Pattern.jpg}
+		\caption{Intensity (Amplitude)} % subcaption
+	\end{subfigure}
+\end{figure}
+\vspace{-3em}
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{0.2\textwidth} % width of left subfigure
+		\includegraphics[scale=0.115]{5Pattern.jpg}
+		\caption{Quantized} % subcaption
+	\end{subfigure}
+	\vspace{1em} % here you can insert horizontal or vertical space
+	\begin{subfigure}{0.2\textwidth} % width of right subfigure
+		\includegraphics[scale=0.115]{7Pattern.jpg}
+		\caption{Bit Flip Error (50\%)} % subcaption
+	\end{subfigure}
+	\begin{subfigure}{0.2\textwidth} % width of right subfigure
+		\includegraphics[scale=0.115]{8Pattern.jpg}
+		\caption{No Errors} % subcaption
+	\end{subfigure}
+	\begin{subfigure}{0.2\textwidth} % width of left subfigure
+		\includegraphics[scale=0.115]{9Pattern.jpg}
+		\caption{1's Comp. Error (50\%)} % subcaption
+	\end{subfigure}
+\end{figure}
+
+
+}
+
 %----------------------------------------------------------------------------------------
 %	FORMULAS
 %----------------------------------------------------------------------------------------
 
-\headerbox{Formulas}{name=formulas,column=2,row=0}{
+\headerbox{Formulas}{name=formulas,column=2, below=resultsProcessing1}{
 \large \textbf{The Discrete Cosine Transform Formula}
 \begin{equation}
 \label{eqn: DCT}
@@ -305,7 +401,7 @@ D(i,j) =& \frac{1}{\sqrt{2N}}C(i)C(j)\sum_{x=0}^{N-1}\sum_{y=0}^{N-1}p(x,y) \cos
 \begin{equation}
 \label{eqn: Cheby}
 \begin{split}
-D(p,q) =& \max_i(|p_i-1_i|)
+D(p,q) =& \max_i(|p_i-q_i|)
 \end{split}
 \end{equation}
 
@@ -347,7 +443,23 @@ The designed algorithm for image compression can be improved in numerous ways, i
 %----------------------------------------------------------------------------------------
 
 \headerbox{Conclusion}{name=conclusion,column=2,below=FutureWork}{ % This block's bottom aligns with the bottom of the conclusion block
-This project is more research based, and is proof of concept that multiple compression types can be utilized together for image compression. The 
+This project is a proof of concept that an image compression technique to both create and fill holes is possible and viable to use in noisy environments.
+This was proven by:\
+\begin{itemize}\compresslist
+	\vspace{-0.5em}
+	\item Creating a novel holes creation algorithm
+	\item Using an additional well known compression scheme in addition to the holes algorithm
+	\item Simulating a simple channel and introducing random errors to the channel
+	\item Filling of holes and successful reconstruction of original image
+\end{itemize}
+	\vspace{-0.5em}
+Overall success criteria of the algorithm:
+\begin{itemize}\compresslist
+	\vspace{-0.5em}
+	\item Achieved compression ratios of an average of: $1.303765$ (Pattern); $1.6475$ (Landscape); $2.0909$ (High Contrast)
+	\item Average PSNR of: $-14.111325dB$ (Pattern); $-16.7051dB$ (Landscape); $-15.7210dB$ (High Contrast)
+	\item Average MSE of: $25.904334$ (Pattern); $52.7247$ (Landscape); $57.5855$ (High Contrast)
+\end{itemize}
 
 
 }
