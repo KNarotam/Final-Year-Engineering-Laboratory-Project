@@ -1,3 +1,8 @@
+%% Image Compression based on Non-Parametric Sampling in Noisy Environments (Compression using DWT Only)
+% Authors: 19G01: Kishan Narotam (717 931) & Nitesh Nana (720 064)
+
+%%
+
 % Discrete Wavelet Transform
 clear all;
 close all; 
@@ -43,7 +48,8 @@ alpha = 1.5;
 % XC stores the compressed version of the data 
 % PERF0 is the compression ratio achieved in percentage
 [XC,CXC,LXC,PERF0,PERFL2] = wdencmp('lvd',C,S,wname,N,THR,'h');
-fprintf('Compression Ratio: ',PERF0);
+fprintf('Compression Ratio: ');
+disp(PERF0)
 
 % Compressed image
 % Display the Compressed image. The axis do not show, so we set the
