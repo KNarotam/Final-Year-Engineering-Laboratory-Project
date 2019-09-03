@@ -57,8 +57,6 @@ imwrite(XC,'compressedImage.tif');
 imfinfo('compressedImage.tif')
 
 % Decompression
-% 2-D wavelet reconstruction
-% waverec2 performs wavelet reconstruction on the decomposed structure
 X = waverec2(C,S,'haar');
 decompressedImage = uint8(X);
 
